@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Métodos Numéricos — Integración</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --navy: #0d1b3e;
+      --navy2: #162250;
+      --gold: #e8b84b;
+      --gold2: #f5d080;
+      --cream: #f7f5ef;
+      --cream2: #eee9dc;
+      --text: #1a1a2e;
+      --text2: #4a4a6a;
+      --white: #ffffff;
+      --accent: #2e5bbd;
+      --accent2: #4a7de8;
+      --border: #d8d2c4;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(13, 27, 62, .10);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #1e3a6e 100%);
+      padding: 0 2.5rem;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, .3)
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem
+    }
+
+    .integral-icon-hdr {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      color: var(--gold);
+      line-height: 1;
+      margin-top: -4px
+    }
+
+    .header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.55rem;
+      color: var(--white)
+    }
+
+    .header-title span {
+      color: var(--gold)
+    }
+
+    .header-sub {
+      font-size: .75rem;
+      color: rgba(255, 255, 255, .5);
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      font-weight: 300
+    }
+
+    .header-badge {
+      background: rgba(232, 184, 75, .15);
+      border: 1px solid rgba(232, 184, 75, .4);
+      color: var(--gold2);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      padding: 6px 16px;
+      border-radius: 20px;
+      text-transform: uppercase
+    }
+
+    /* NAV */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2.5rem;
+      display: flex;
+      position: sticky;
+      top: 88px;
+      z-index: 99;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .05)
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 20px;
+      height: 54px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .87rem;
+      font-weight: 500;
+      color: var(--text2);
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: color .2s
+    }
+
+    .nav-btn:hover {
+      color: var(--navy)
+    }
+
+    .nav-btn.active {
+      color: var(--navy);
+      border-bottom-color: var(--gold);
+      font-weight: 600
+    }
+
+    .nav-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--cream2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 600;
+      color: var(--text2);
+      flex-shrink: 0;
+      transition: all .2s
+    }
+
+    .nav-btn.active .nav-num {
+      background: var(--navy);
+      color: var(--gold)
+    }
+
+    /* MAIN */
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 2rem
+    }
+
+    .section {
+      display: none
+    }
+
+    .section.active {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 2rem;
+      align-items: start
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 160px
+    }
+
+    /* METHOD HEADER with integral + A/B inputs */
+    .method-header {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      padding: 1.4rem 1.5rem
+    }
+
+    .method-name-row {
+      text-align: center;
+      margin-bottom: 1rem
+    }
+
+    .method-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--white)
+    }
+
+    .method-sub-lbl {
+      font-size: .7rem;
+      color: rgba(255, 255, 255, .45);
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      margin-top: 3px
+    }
+
+    /* INTEGRAL WIDGET with A B inputs */
+    .integral-widget {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px
+    }
+
+    .integral-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px
+    }
+
+    .lim-input {
+      width: 60px;
+      padding: 5px 6px;
+      background: rgba(255, 255, 255, .12);
+      border: 1.5px solid rgba(232, 184, 75, .4);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      color: var(--gold2);
+      text-align: center;
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .lim-input::placeholder {
+      color: rgba(232, 184, 75, .4)
+    }
+
+    .lim-input:focus {
+      border-color: var(--gold);
+      background: rgba(255, 255, 255, .18)
+    }
+
+    .lim-label {
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .4);
+      letter-spacing: .08em;
+      text-transform: uppercase
+    }
+
+    .integral-symbol {
+      font-family: 'DM Serif Display', serif;
+      font-size: 5rem;
+      color: var(--gold);
+      line-height: 1;
+      text-shadow: 0 0 24px rgba(232, 184, 75, .25);
+      margin: 0 4px
+    }
+
+    .fx-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem;
+      color: rgba(255, 255, 255, .7);
+      margin-left: 4px
+    }
+
+    /* LEFT BODY */
+    .left-body {
+      padding: 1.2rem 1.3rem
+    }
+
+    /* CALCULADORA CIENTÍFICA */
+    .calc-section {
+      margin-bottom: 1.1rem
+    }
+
+    .calc-section-title {
+      font-size: .67rem;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: .5rem
+    }
+
+    .calc-display {
+      background: var(--cream);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .95rem;
+      color: var(--text);
+      min-height: 38px;
+      word-break: break-all;
+      margin-bottom: .6rem;
+      cursor: text
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px
+    }
+
+    .ck {
+      padding: 7px 4px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      line-height: 1.2
+    }
+
+    .ck:hover {
+      background: var(--cream2);
+      border-color: var(--accent2)
+    }
+
+    .ck.op {
+      background: #eef3fc;
+      color: var(--accent);
+      border-color: rgba(46, 91, 189, .25)
+    }
+
+    .ck.op:hover {
+      background: #dce7fa
+    }
+
+    .ck.fn {
+      background: #f0faf5;
+      color: #1a7a50;
+      border-color: rgba(26, 122, 80, .25);
+      font-size: .68rem
+    }
+
+    .ck.fn:hover {
+      background: #d9f2e6
+    }
+
+    .ck.gold {
+      background: linear-gradient(135deg, var(--navy), var(--accent));
+      color: var(--gold);
+      border-color: var(--accent);
+      font-weight: 600
+    }
+
+    .ck.gold:hover {
+      opacity: .88
+    }
+
+    .ck.red {
+      background: #fff0f0;
+      color: #c0392b;
+      border-color: #f5c6c6
+    }
+
+    .ck.red:hover {
+      background: #ffe0e0
+    }
+
+    .ck.span2 {
+      grid-column: span 2
+    }
+
+    .ck.span3 {
+      grid-column: span 3
+    }
+
+    .use-btn {
+      width: 100%;
+      margin-top: 6px;
+      padding: 7px;
+      background: linear-gradient(135deg, var(--gold), #d4a43a);
+      color: var(--navy);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .03em
+    }
+
+    .use-btn:hover {
+      opacity: .9
+    }
+
+    /* INPUTS AREA */
+    .inp-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: .9rem
+    }
+
+    .inp-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text2)
+    }
+
+    .inp-label code {
+      color: var(--accent2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85em;
+      background: rgba(74, 125, 232, .08);
+      padding: 1px 5px;
+      border-radius: 4px
+    }
+
+    input[type=number] {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      background: var(--cream);
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s
+    }
+
+    input[type=number]:focus {
+      border-color: var(--accent2);
+      background: var(--white)
+    }
+
+    /* FORMULA */
+    .formula-section {
+      background: var(--cream);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      padding: .9rem 1rem;
+      margin-bottom: .9rem
+    }
+
+    .formula-title {
+      font-size: .67rem;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: .5rem
+    }
+
+    .formula-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--navy);
+      line-height: 2;
+      background: var(--white);
+      border-radius: 6px;
+      padding: .6rem .8rem;
+      border: 1px solid var(--border)
+    }
+
+    /* DELTA */
+    .delta-section {
+      background: linear-gradient(135deg, rgba(46, 91, 189, .06), rgba(74, 125, 232, .04));
+      border: 1px solid rgba(46, 91, 189, .2);
+      border-radius: var(--radius-sm);
+      padding: .9rem 1rem;
+      margin-bottom: .9rem
+    }
+
+    .delta-title {
+      font-size: .67rem;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .6rem
+    }
+
+    .delta-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: .4rem
+    }
+
+    .delta-op {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .95rem;
+      color: var(--text2)
+    }
+
+    .delta-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(46, 91, 189, .1);
+      padding: 4px 10px;
+      border-radius: 5px;
+      min-width: 50px;
+      text-align: center;
+      border: 1px solid rgba(46, 91, 189, .2)
+    }
+
+    .delta-result-big {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      background: rgba(46, 91, 189, .08);
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(46, 91, 189, .2)
+    }
+
+    .delta-formula-eq {
+      font-size: .78rem;
+      color: var(--text2);
+      margin-top: .3rem;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    /* BUTTONS */
+    .btn-calc {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(135deg, var(--navy), var(--accent));
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: all .2s;
+      margin-bottom: .6rem
+    }
+
+    .btn-calc:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(13, 27, 62, .3)
+    }
+
+    .btn-reset {
+      width: 100%;
+      padding: 9px;
+      background: transparent;
+      color: var(--text2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .btn-reset:hover {
+      border-color: var(--navy);
+      color: var(--navy)
+    }
+
+    /* RIGHT */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow)
+    }
+
+    .card-header {
+      padding: .9rem 1.3rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .6rem
+    }
+
+    .card-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      background: linear-gradient(135deg, var(--navy), var(--accent));
+      color: var(--gold)
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: .9rem;
+      color: var(--navy)
+    }
+
+    .card-body {
+      padding: 1rem 1.2rem
+    }
+
+    .tbl-wrap {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem
+    }
+
+    thead tr {
+      background: linear-gradient(135deg, var(--navy), var(--navy2))
+    }
+
+    thead th {
+      padding: 8px 12px;
+      text-align: left;
+      color: var(--gold2);
+      font-weight: 600;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--cream2);
+      transition: background .15s
+    }
+
+    tbody tr:hover {
+      background: var(--cream)
+    }
+
+    tbody td {
+      padding: 7px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text)
+    }
+
+    tbody tr.sum-row td {
+      color: var(--navy);
+      font-weight: 700;
+      border-top: 2px solid var(--gold);
+      background: rgba(232, 184, 75, .07)
+    }
+
+    .result-bar {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      border-radius: var(--radius-sm);
+      padding: .9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: .9rem
+    }
+
+    .result-lbl {
+      font-size: .72rem;
+      color: rgba(255, 255, 255, .55);
+      letter-spacing: .06em;
+      text-transform: uppercase
+    }
+
+    .result-val {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--gold)
+    }
+
+    .result-formula {
+      font-size: .7rem;
+      color: rgba(255, 255, 255, .4);
+      margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .chart-container {
+      position: relative;
+      height: 270px
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      color: var(--text2)
+    }
+
+    .empty-icon {
+      font-size: 2rem;
+      opacity: .25;
+      margin-bottom: .6rem
+    }
+
+    .empty-text {
+      font-size: .87rem
+    }
+
+    @media(max-width:960px) {
+      .section.active {
+        grid-template-columns: 1fr
+      }
+
+      .left-panel {
+        position: static
+      }
+
+      header,
+      nav,
+      main {
+        padding-left: 1rem;
+        padding-right: 1rem
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-left">
+      <div class="integral-icon-hdr">∫</div>
+      <div>
+        <div class="header-title">Métodos <span>Numéricos</span></div>
+        <div class="header-sub">Integración Numérica · Trabajo Final de Curso</div>
+      </div>
+    </div>
+    <div class="header-badge">5 Métodos</div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchMethod(0)"><span class="nav-num">1</span>Trapezoidal</button>
+    <button class="nav-btn" onclick="switchMethod(1)"><span class="nav-num">2</span>Jorge Boole</button>
+    <button class="nav-btn" onclick="switchMethod(2)"><span class="nav-num">3</span>Simpson 3/8</button>
+    <button class="nav-btn" onclick="switchMethod(3)"><span class="nav-num">4</span>Simpson 1/3</button>
+    <button class="nav-btn" onclick="switchMethod(4)"><span class="nav-num">5</span>Simpson Abierto</button>
+  </nav>
+
+  <main id="mainContent"></main>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // CONFIG DE MÉTODOS
+    // ─────────────────────────────────────────────
+    const METHODS = [
+      {
+        id: 0, name: 'Método Trapezoidal', sub: 'Regla Compuesta', hasN: true,
+        formula: 'I = (Δ/2)[ f(x₀) + 2f(x₁) + 2f(x₂) + … + f(xₙ) ]',
+        deltaFormula: 'Δ = (b − a) / n', divisor: 'n'
+      },
+      {
+        id: 1, name: 'Método Jorge Boole', sub: 'Newton-Cotes Cerrado', hasN: false,
+        formula: 'I = (2Δ/45)[ 7f(x₁) + 32f(x₂) + 12f(x₃) + 32f(x₄) + 7f(x₅) ]',
+        deltaFormula: 'Δ = (b − a) / 4', divisor: 4
+      },
+      {
+        id: 2, name: 'Simpson 3/8', sub: 'Newton-Cotes — Orden 3', hasN: false,
+        formula: 'I = (3Δ/8)[ f(x₁) + 3f(x₂) + 3f(x₃) + f(x₄) ]',
+        deltaFormula: 'Δ = (b − a) / 3', divisor: 3
+      },
+      {
+        id: 3, name: 'Simpson 1/3', sub: 'Newton-Cotes — Orden 2', hasN: true,
+        formula: 'I = (Δ/3)[ f(x₁) + 4f(x₂) + f(x₃) ]',
+        deltaFormula: 'Δ = (b − a) / 2', divisor: 2
+      },
+      {
+        id: 4, name: 'Simpson Abierto', sub: 'n particiones pares', hasN: true,
+        formula: 'I = (Δ/3)[ f(x₁) + 4f(x₂) + 2f(x₃) + 4f(x₄) + … + f(xₙ) ]',
+        deltaFormula: 'Δ = (b − a) / n', divisor: 'n'
+      },
+    ];
+
+    // ─────────────────────────────────────────────
+    // RENDER HTML de cada sección
+    // ─────────────────────────────────────────────
+    function buildSections() {
+      const main = document.getElementById('mainContent');
+      main.innerHTML = METHODS.map(m => `
+  <section class="section${m.id === 0 ? ' active' : ''}" id="m${m.id}">
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="method-header">
+        <div class="method-name-row">
+          <div class="method-name">${m.name}</div>
+          <div class="method-sub-lbl">${m.sub}</div>
+        </div>
+        <!-- INTEGRAL con A y B como inputs -->
+        <div class="integral-widget">
+          <div class="integral-column">
+            <div class="lim-label">b</div>
+            <input class="lim-input" type="number" id="m${m.id}-b" placeholder="b" step="any"/>
+            <input class="lim-input" type="number" id="m${m.id}-a" placeholder="a" step="any" style="margin-top:18px"/>
+            <div class="lim-label">a</div>
+          </div>
+          <div class="integral-symbol">∫</div>
+          <div class="fx-display" id="m${m.id}-fxdisp">f(x) dx</div>
+        </div>
+      </div>
+
+      <div class="left-body">
+        <!-- CALCULADORA CIENTÍFICA -->
+        <div class="calc-section">
+          <div class="calc-section-title">Calculadora Científica — f(x)</div>
+          <div class="calc-display" id="m${m.id}-display" onclick="focusCalc(${m.id})">f(x)</div>
+          <div class="calc-grid">
+            <!-- Fila 1: funciones trig -->
+            <button class="ck fn" onclick="ins(${m.id},'Math.sin(')">sin</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.cos(')">cos</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.tan(')">tan</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.asin(')">asin</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.acos(')">acos</button>
+            <!-- Fila 2 -->
+            <button class="ck fn" onclick="ins(${m.id},'Math.atan(')">atan</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.log(')">ln</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.log10(')">log</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.sqrt(')">√</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.exp(')">eˣ</button>
+            <!-- Fila 3 -->
+            <button class="ck fn" onclick="ins(${m.id},'Math.abs(')">|x|</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.PI')">π</button>
+            <button class="ck fn" onclick="ins(${m.id},'Math.E')">e</button>
+            <button class="ck op" onclick="ins(${m.id},'**')">xⁿ</button>
+            <button class="ck op" onclick="ins(${m.id},'(')"> ( </button>
+            <!-- Fila 4 -->
+            <button class="ck" onclick="ins(${m.id},'7')">7</button>
+            <button class="ck" onclick="ins(${m.id},'8')">8</button>
+            <button class="ck" onclick="ins(${m.id},'9')">9</button>
+            <button class="ck op" onclick="ins(${m.id},'/')">÷</button>
+            <button class="ck op" onclick="ins(${m.id},')')"> ) </button>
+            <!-- Fila 5 -->
+            <button class="ck" onclick="ins(${m.id},'4')">4</button>
+            <button class="ck" onclick="ins(${m.id},'5')">5</button>
+            <button class="ck" onclick="ins(${m.id},'6')">6</button>
+            <button class="ck op" onclick="ins(${m.id},'*')">×</button>
+            <button class="ck fn" onclick="ins(${m.id},'x')">x</button>
+            <!-- Fila 6 -->
+            <button class="ck" onclick="ins(${m.id},'1')">1</button>
+            <button class="ck" onclick="ins(${m.id},'2')">2</button>
+            <button class="ck" onclick="ins(${m.id},'3')">3</button>
+            <button class="ck op" onclick="ins(${m.id},'-')">−</button>
+            <button class="ck op" onclick="ins(${m.id},'+')">+</button>
+            <!-- Fila 7 -->
+            <button class="ck span2" onclick="ins(${m.id},'0')">0</button>
+            <button class="ck" onclick="ins(${m.id},'.')">.</button>
+            <button class="ck red" onclick="bksp(${m.id})">⌫</button>
+            <button class="ck red" onclick="clr(${m.id})">C</button>
+          </div>
+          <button class="use-btn" onclick="useFx(${m.id})">✓ Usar como f(x)</button>
+        </div>
+
+        <!-- n si aplica -->
+        ${m.hasN ? `<div class="inp-group"><div class="inp-label">Subintervalos <code>n</code>${m.id === 1 || m.id === 2 ? '' : ''}</div><input type="number" id="m${m.id}-n" value="${m.id === 0 ? 6 : m.id === 3 ? 2 : 4}" min="2"/></div>` : ''}
+
+        <!-- FÓRMULA -->
+        <div class="formula-section">
+          <div class="formula-title">Fórmula del Método</div>
+          <div class="formula-display">${m.formula}</div>
+        </div>
+
+        <!-- DELTA -->
+        <div class="delta-section">
+          <div class="delta-title">Cálculo de Δ — ${m.deltaFormula}</div>
+          <div class="delta-row">
+            <span class="delta-op">Δ =</span>
+            <span class="delta-val" id="m${m.id}-dv-b">b</span>
+            <span class="delta-op">−</span>
+            <span class="delta-val" id="m${m.id}-dv-a">a</span>
+            <span class="delta-op">÷</span>
+            <span class="delta-val" id="m${m.id}-dv-div">${typeof m.divisor === 'number' ? m.divisor : 'n'}</span>
+            <span class="delta-op">=</span>
+            <span class="delta-result-big" id="m${m.id}-delta-res">—</span>
+          </div>
+          <div class="delta-formula-eq" id="m${m.id}-delta-eq"></div>
+        </div>
+
+        <button class="btn-calc" onclick="calc(${m.id})">Calcular Integral ∫</button>
+        <button class="btn-reset" onclick="resetMethod(${m.id})">↺ Resetear</button>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <div class="card">
+        <div class="card-header"><div class="card-icon">∑</div><div class="card-title">Tabla de Iteraciones y Sumatoria</div></div>
+        <div class="card-body"><div id="m${m.id}-tbl">${emptyHTML()}</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon">◉</div><div class="card-title">Puntos para Graficar</div></div>
+        <div class="card-body"><div id="m${m.id}-pts">${emptyHTML('Los puntos xᵢ, f(xᵢ) aparecen aquí')}</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon">〜</div><div class="card-title">Gráfica de f(x)</div></div>
+        <div class="card-body"><div class="chart-container"><canvas id="chart${m.id}"></canvas></div></div>
+      </div>
+    </div>
+  </section>`).join('');
+
+      // Setup listeners A/B → delta autocomplete
+      METHODS.forEach(m => setupABListeners(m));
+    }
+
+    function emptyHTML(msg = 'Ingresa los valores y presiona Calcular') {
+      return `<div class="empty-state"><div class="empty-icon">∫</div><div class="empty-text">${msg}</div></div>`;
+    }
+
+    // ─────────────────────────────────────────────
+    // NAVEGACIÓN
+    // ─────────────────────────────────────────────
+    function switchMethod(i) {
+      document.querySelectorAll('.section').forEach((s, j) => s.classList.toggle('active', i === j));
+      document.querySelectorAll('.nav-btn').forEach((b, j) => b.classList.toggle('active', i === j));
+    }
+
+    // ─────────────────────────────────────────────
+    // CALCULADORA: estado por método
+    // ─────────────────────────────────────────────
+    const calcExpr = {};
+    function getExpr(id) { return calcExpr[id] || ''; }
+    function setExpr(id, v) { calcExpr[id] = v; document.getElementById('m' + id + '-display').textContent = v || 'f(x)'; }
+
+    function ins(id, ch) { setExpr(id, getExpr(id) + ch); }
+    function bksp(id) { const e = getExpr(id); setExpr(id, e.slice(0, -1)); }
+    function clr(id) { setExpr(id, ''); }
+    function focusCalc(id) {/* visual only */ }
+    function useFx(id) {
+      const expr = getExpr(id);
+      if (!expr) { alert('Escribe primero una función en la calculadora.'); return; }
+      document.getElementById('m' + id + '-fxdisp').textContent = expr + ' dx';
+    }
+
+    // ─────────────────────────────────────────────
+    // A / B → autocomplete delta
+    // ─────────────────────────────────────────────
+    function setupABListeners(m) {
+      const aEl = document.getElementById('m' + m.id + '-a');
+      const bEl = document.getElementById('m' + m.id + '-b');
+      const nEl = m.hasN ? document.getElementById('m' + m.id + '-n') : null;
+      function upd() {
+        const a = parseFloat(aEl.value);
+        const b = parseFloat(bEl.value);
+        const div = typeof m.divisor === 'number' ? m.divisor : (nEl ? parseFloat(nEl.value) : NaN);
+        // update display spans
+        document.getElementById('m' + m.id + '-dv-b').textContent = isNaN(b) ? 'b' : b;
+        document.getElementById('m' + m.id + '-dv-a').textContent = isNaN(a) ? 'a' : a;
+        document.getElementById('m' + m.id + '-dv-div').textContent = isNaN(div) ? 'n' : div;
+        if (!isNaN(a) && !isNaN(b) && !isNaN(div) && div !== 0) {
+          const d = (b - a) / div;
+          document.getElementById('m' + m.id + '-delta-res').textContent = d.toFixed(6);
+          document.getElementById('m' + m.id + '-delta-eq').textContent = `(${b} − ${a}) / ${div} = ${d.toFixed(6)}`;
+        } else {
+          document.getElementById('m' + m.id + '-delta-res').textContent = '—';
+          document.getElementById('m' + m.id + '-delta-eq').textContent = '';
+        }
+      }
+      aEl.addEventListener('input', upd);
+      bEl.addEventListener('input', upd);
+      if (nEl) nEl.addEventListener('input', upd);
+    }
+
+    // ─────────────────────────────────────────────
+    // EVALUAR f(x)
+    // ─────────────────────────────────────────────
+    function evalF(expr, x) {
+      try { return Function('x', 'return ' + expr)(x); } catch { return NaN; }
+    }
+
+    // ─────────────────────────────────────────────
+    // CHARTS
+    // ─────────────────────────────────────────────
+    const charts = {};
+    function destroyChart(i) { if (charts[i]) { charts[i].destroy(); delete charts[i]; } }
+    function drawChart(idx, fxExpr, pts) {
+      destroyChart(idx);
+      const xs = pts.map(p => p.x);
+      const minX = Math.min(...xs), maxX = Math.max(...xs);
+      const steps = 300, step = (maxX - minX) / steps;
+      const curve = [];
+      for (let i = 0; i <= steps; i++) { const x = minX + i * step; curve.push({ x, y: evalF(fxExpr, x) }); }
+      const ctx = document.getElementById('chart' + idx).getContext('2d');
+      charts[idx] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [
+            { label: 'f(x)', data: curve, borderColor: '#2e5bbd', borderWidth: 2, pointRadius: 0, fill: true, backgroundColor: 'rgba(46,91,189,.08)', tension: 0.4 },
+            { label: 'Puntos xᵢ', data: pts, borderColor: '#e8b84b', backgroundColor: '#e8b84b', pointRadius: 7, pointHoverRadius: 9, type: 'scatter', showLine: false }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#1a1a2e', font: { family: 'DM Sans', size: 12 } } } },
+          scales: {
+            x: { type: 'linear', title: { display: true, text: 'x', color: '#4a4a6a' }, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { color: '#4a4a6a', font: { family: 'JetBrains Mono', size: 11 } } },
+            y: { title: { display: true, text: 'f(x)', color: '#4a4a6a' }, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { color: '#4a4a6a', font: { family: 'JetBrains Mono', size: 11 } } }
+          }
+        }
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // RENDER TABLA + RESULTADO
+    // ─────────────────────────────────────────────
+    function renderTable(rows, I, deltaVal, multiplierStr, wrapId) {
+      const sumCoefFx = rows.reduce((s, r) => s + r.coefFx, 0);
+      let html = `<div class="tbl-wrap"><table>
+    <thead><tr><th>i</th><th>xᵢ</th><th>f(xᵢ)</th><th>Coef.</th><th>Coef × f(xᵢ)</th></tr></thead><tbody>`;
+      rows.forEach(r => {
+        html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td><td>${r.coef}</td><td>${r.coefFx.toFixed(8)}</td></tr>`;
+      });
+      html += `<tr class="sum-row"><td colspan="4" style="text-align:right">Σ (Coef × f(xᵢ)) =</td><td>${sumCoefFx.toFixed(8)}</td></tr>`;
+      html += `</tbody></table></div>`;
+      html += `<div class="result-bar">
+    <div>
+      <div class="result-lbl">Integral Aproximada</div>
+      <div class="result-formula">${multiplierStr} × ${sumCoefFx.toFixed(6)}</div>
+    </div>
+    <div class="result-val">I ≈ ${I.toFixed(10)}</div>
+  </div>`;
+      document.getElementById(wrapId).innerHTML = html;
+    }
+
+    function renderPoints(rows, wrapId) {
+      let html = `<div class="tbl-wrap"><table>
+    <thead><tr><th>i</th><th>xᵢ</th><th>f(xᵢ)</th></tr></thead><tbody>`;
+      rows.forEach(r => {
+        html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td></tr>`;
+      });
+      html += `</tbody></table></div>`;
+      document.getElementById(wrapId).innerHTML = html;
+    }
+
+    // ─────────────────────────────────────────────
+    // RESET
+    // ─────────────────────────────────────────────
+    function resetMethod(id) {
+      clr(id);
+      document.getElementById('m' + id + '-fxdisp').textContent = 'f(x) dx';
+      document.getElementById('m' + id + '-a').value = '';
+      document.getElementById('m' + id + '-b').value = '';
+      const nEl = document.getElementById('m' + id + '-n'); if (nEl) nEl.value = id === 0 ? 6 : id === 3 ? 2 : 4;
+      ['dv-b', 'dv-a', 'dv-div'].forEach(k => {
+        const el = document.getElementById('m' + id + '-' + k);
+        if (el) el.textContent = k.includes('div') ? METHODS[id].divisor === 'n' ? 'n' : METHODS[id].divisor : k.includes('b') ? 'b' : 'a';
+      });
+      document.getElementById('m' + id + '-delta-res').textContent = '—';
+      document.getElementById('m' + id + '-delta-eq').textContent = '';
+      document.getElementById('m' + id + '-tbl').innerHTML = emptyHTML();
+      document.getElementById('m' + id + '-pts').innerHTML = emptyHTML('Los puntos xᵢ, f(xᵢ) aparecen aquí');
+      destroyChart(id);
+    }
+
+    // ─────────────────────────────────────────────
+    // CALC DISPATCHER
+    // ─────────────────────────────────────────────
+    function calc(id) {
+      const fxExpr = getExpr(id);
+      if (!fxExpr) { alert('Primero escribe una función f(x) usando la calculadora y presiona "Usar como f(x)".'); return; }
+      const a = parseFloat(document.getElementById('m' + id + '-a').value);
+      const b = parseFloat(document.getElementById('m' + id + '-b').value);
+      if (isNaN(a) || isNaN(b)) { alert('Ingresa los límites a y b en el símbolo de integración.'); return; }
+
+      if (id === 0) calcTrap(a, b, fxExpr);
+      else if (id === 1) calcBoole(a, b, fxExpr);
+      else if (id === 2) calcS38(a, b, fxExpr);
+      else if (id === 3) calcS13(a, b, fxExpr);
+      else if (id === 4) calcSA(a, b, fxExpr);
+    }
+
+    // ─────────────────────────────────────────────
+    // MÉTODOS
+    // ─────────────────────────────────────────────
+
+    // 0 — TRAPEZOIDAL
+    function calcTrap(a, b, fx) {
+      const n = parseInt(document.getElementById('m0-n').value) || 6;
+      const d = (b - a) / n;
+      const rows = [];
+      for (let i = 0; i <= n; i++) {
+        const x = a + i * d, f = evalF(fx, x);
+        const coef = (i === 0 || i === n) ? 1 : 2;
+        rows.push({ i, x, fx: f, coef, coefFx: coef * f });
+      }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
+      const I = (d / 2) * sum;
+      renderTable(rows, I, d, `(${d.toFixed(6)}/2)`, 'm0-tbl');
+      renderPoints(rows, 'm0-pts');
+      drawChart(0, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+    }
+
+    // 1 — BOOLE
+    function calcBoole(a, b, fx) {
+      const d = (b - a) / 4;
+      const coefs = [7, 32, 12, 32, 7];
+      const rows = [];
+      for (let i = 0; i < 5; i++) {
+        const x = a + i * d, f = evalF(fx, x);
+        rows.push({ i: i + 1, x, fx: f, coef: coefs[i], coefFx: coefs[i] * f });
+      }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
+      const I = (2 * d / 45) * sum;
+      renderTable(rows, I, d, `(2×${d.toFixed(6)}/45)`, 'm1-tbl');
+      renderPoints(rows, 'm1-pts');
+      drawChart(1, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+    }
+
+    // 2 — SIMPSON 3/8
+    function calcS38(a, b, fx) {
+      const d = (b - a) / 3;
+      const coefs = [1, 3, 3, 1];
+      const rows = [];
+      for (let i = 0; i < 4; i++) {
+        const x = a + i * d, f = evalF(fx, x);
+        rows.push({ i: i + 1, x, fx: f, coef: coefs[i], coefFx: coefs[i] * f });
+      }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
+      const I = (3 * d / 8) * sum;
+      renderTable(rows, I, d, `(3×${d.toFixed(6)}/8)`, 'm2-tbl');
+      renderPoints(rows, 'm2-pts');
+      drawChart(2, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+    }
+
+    // 3 — SIMPSON 1/3
+    function calcS13(a, b, fx) {
+      let n = parseInt(document.getElementById('m3-n').value) || 2;
+      if (n % 2 !== 0) n++;
+      const d = (b - a) / n;
+      const rows = [];
+      for (let i = 0; i <= n; i++) {
+        const x = a + i * d, f = evalF(fx, x);
+        let coef = 1;
+        if (i > 0 && i < n) coef = i % 2 === 0 ? 2 : 4;
+        rows.push({ i: i + 1, x, fx: f, coef, coefFx: coef * f });
+      }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
+      const I = (d / 3) * sum;
+      renderTable(rows, I, d, `(${d.toFixed(6)}/3)`, 'm3-tbl');
+      renderPoints(rows, 'm3-pts');
+      drawChart(3, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+    }
+
+    // 4 — SIMPSON ABIERTO
+    function calcSA(a, b, fx) {
+      let n = parseInt(document.getElementById('m4-n').value) || 4;
+      if (n % 2 !== 0) n++;
+      const d = (b - a) / n;
+      const rows = [];
+      for (let i = 1; i <= n; i++) {
+        const x = a + i * d, f = evalF(fx, x);
+        let coef = i === n ? 1 : i % 2 !== 0 ? 4 : 2;
+        rows.push({ i, x, fx: f, coef, coefFx: coef * f });
+      }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
+      const I = (d / 3) * sum;
+      renderTable(rows, I, d, `(${d.toFixed(6)}/3)`, 'm4-tbl');
+      renderPoints(rows, 'm4-pts');
+      drawChart(4, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+    }
+
+    // ─────────────────────────────────────────────
+    // INIT
+    // ─────────────────────────────────────────────
+    buildSections();
+  </script>
+</body>
+
+</html>
