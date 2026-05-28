@@ -9,6 +9,7 @@
     href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.0/math.js"></script>
   <style>
     :root {
       --navy: #0d1b3e;
@@ -38,7 +39,7 @@
       font-family: 'DM Sans', sans-serif;
       background: var(--cream);
       color: var(--text);
-      min-height: 100vh
+      min-height: 100vh;
     }
 
     /* HEADER */
@@ -52,13 +53,13 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, .3)
+      box-shadow: 0 2px 20px rgba(0, 0, 0, .3);
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 1.2rem
+      gap: 1.2rem;
     }
 
     .integral-icon-hdr {
@@ -66,17 +67,17 @@
       font-size: 3rem;
       color: var(--gold);
       line-height: 1;
-      margin-top: -4px
+      margin-top: -4px;
     }
 
     .header-title {
       font-family: 'DM Serif Display', serif;
       font-size: 1.55rem;
-      color: var(--white)
+      color: var(--white);
     }
 
     .header-title span {
-      color: var(--gold)
+      color: var(--gold);
     }
 
     .header-sub {
@@ -85,7 +86,7 @@
       letter-spacing: .07em;
       text-transform: uppercase;
       margin-top: 4px;
-      font-weight: 300
+      font-weight: 300;
     }
 
     .header-badge {
@@ -97,7 +98,7 @@
       letter-spacing: .1em;
       padding: 6px 16px;
       border-radius: 20px;
-      text-transform: uppercase
+      text-transform: uppercase;
     }
 
     /* NAV */
@@ -109,7 +110,7 @@
       position: sticky;
       top: 88px;
       z-index: 99;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .05)
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
     }
 
     .nav-btn {
@@ -128,17 +129,17 @@
       white-space: nowrap;
       border-bottom: 3px solid transparent;
       margin-bottom: -1px;
-      transition: color .2s
+      transition: color .2s;
     }
 
     .nav-btn:hover {
-      color: var(--navy)
+      color: var(--navy);
     }
 
     .nav-btn.active {
       color: var(--navy);
       border-bottom-color: var(--gold);
-      font-weight: 600
+      font-weight: 600;
     }
 
     .nav-num {
@@ -153,30 +154,30 @@
       font-weight: 600;
       color: var(--text2);
       flex-shrink: 0;
-      transition: all .2s
+      transition: all .2s;
     }
 
     .nav-btn.active .nav-num {
       background: var(--navy);
-      color: var(--gold)
+      color: var(--gold);
     }
 
     /* MAIN */
     main {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 2rem 2rem
+      padding: 2rem;
     }
 
     .section {
-      display: none
+      display: none;
     }
 
     .section.active {
       display: grid;
-      grid-template-columns: 400px 1fr;
+      grid-template-columns: 420px 1fr;
       gap: 2rem;
-      align-items: start
+      align-items: start;
     }
 
     /* LEFT PANEL */
@@ -187,24 +188,23 @@
       overflow: hidden;
       box-shadow: var(--shadow);
       position: sticky;
-      top: 160px
+      top: 160px;
     }
 
-    /* METHOD HEADER with integral + A/B inputs */
     .method-header {
       background: linear-gradient(135deg, var(--navy), var(--navy2));
-      padding: 1.4rem 1.5rem
+      padding: 1.4rem 1.5rem;
     }
 
     .method-name-row {
       text-align: center;
-      margin-bottom: 1rem
+      margin-bottom: 1rem;
     }
 
     .method-name {
       font-family: 'DM Serif Display', serif;
       font-size: 1.2rem;
-      color: var(--white)
+      color: var(--white);
     }
 
     .method-sub-lbl {
@@ -212,22 +212,22 @@
       color: rgba(255, 255, 255, .45);
       letter-spacing: .07em;
       text-transform: uppercase;
-      margin-top: 3px
+      margin-top: 3px;
     }
 
-    /* INTEGRAL WIDGET with A B inputs */
+    /* INTEGRAL WIDGET */
     .integral-widget {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px
+      gap: 6px;
     }
 
     .integral-column {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px
+      gap: 6px;
     }
 
     .lim-input {
@@ -241,23 +241,23 @@
       color: var(--gold2);
       text-align: center;
       outline: none;
-      transition: border-color .2s
+      transition: border-color .2s;
     }
 
     .lim-input::placeholder {
-      color: rgba(232, 184, 75, .4)
+      color: rgba(232, 184, 75, .4);
     }
 
     .lim-input:focus {
       border-color: var(--gold);
-      background: rgba(255, 255, 255, .18)
+      background: rgba(255, 255, 255, .18);
     }
 
     .lim-label {
       font-size: .65rem;
       color: rgba(255, 255, 255, .4);
       letter-spacing: .08em;
-      text-transform: uppercase
+      text-transform: uppercase;
     }
 
     .integral-symbol {
@@ -266,24 +266,26 @@
       color: var(--gold);
       line-height: 1;
       text-shadow: 0 0 24px rgba(232, 184, 75, .25);
-      margin: 0 4px
+      margin: 0 4px;
     }
 
     .fx-display {
       font-family: 'JetBrains Mono', monospace;
       font-size: .9rem;
       color: rgba(255, 255, 255, .7);
-      margin-left: 4px
+      margin-left: 4px;
     }
 
     /* LEFT BODY */
     .left-body {
-      padding: 1.2rem 1.3rem
+      padding: 1.2rem 1.3rem;
     }
 
-    /* CALCULADORA CIENTÍFICA */
+    /* ══════════════════════════════════
+       CALCULADORA CIENTÍFICA (nueva)
+    ══════════════════════════════════ */
     .calc-section {
-      margin-bottom: 1.1rem
+      margin-bottom: 1rem;
     }
 
     .calc-section-title {
@@ -292,7 +294,7 @@
       letter-spacing: .09em;
       text-transform: uppercase;
       color: var(--text2);
-      margin-bottom: .5rem
+      margin-bottom: .45rem;
     }
 
     .calc-display {
@@ -305,110 +307,140 @@
       color: var(--text);
       min-height: 38px;
       word-break: break-all;
-      margin-bottom: .6rem;
-      cursor: text
+      margin-bottom: .5rem;
+      cursor: text;
     }
 
+    /* grid principal 5 cols */
     .calc-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 5px
+      gap: 4px;
+    }
+
+    /* sección label dentro de la calc */
+    .calc-sep {
+      grid-column: span 5;
+      font-size: .58rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text2);
+      padding: 5px 2px 1px;
+      border-top: 1px solid var(--cream2);
+      margin-top: 2px;
     }
 
     .ck {
-      padding: 7px 4px;
+      padding: 6px 3px;
       border: 1px solid var(--border);
       border-radius: 6px;
       background: var(--white);
       font-family: 'JetBrains Mono', monospace;
-      font-size: .75rem;
+      font-size: .72rem;
       color: var(--text);
       cursor: pointer;
       text-align: center;
-      transition: all .15s;
-      line-height: 1.2
+      transition: all .13s;
+      line-height: 1.3;
+      user-select: none;
     }
 
     .ck:hover {
       background: var(--cream2);
-      border-color: var(--accent2)
+      border-color: var(--accent2);
+    }
+
+    .ck:active {
+      transform: scale(.93);
     }
 
     .ck.op {
       background: #eef3fc;
       color: var(--accent);
-      border-color: rgba(46, 91, 189, .25)
+      border-color: rgba(46, 91, 189, .25);
     }
 
     .ck.op:hover {
-      background: #dce7fa
+      background: #dce7fa;
     }
 
     .ck.fn {
       background: #f0faf5;
       color: #1a7a50;
       border-color: rgba(26, 122, 80, .25);
-      font-size: .68rem
+      font-size: .66rem;
     }
 
     .ck.fn:hover {
-      background: #d9f2e6
+      background: #d9f2e6;
     }
 
-    .ck.gold {
-      background: linear-gradient(135deg, var(--navy), var(--accent));
-      color: var(--gold);
-      border-color: var(--accent);
-      font-weight: 600
+    .ck.hyp {
+      background: #f5f0fb;
+      color: #6a2ea0;
+      border-color: rgba(106, 46, 160, .2);
+      font-size: .66rem;
     }
 
-    .ck.gold:hover {
-      opacity: .88
+    .ck.hyp:hover {
+      background: #e8d9f7;
+    }
+
+    .ck.cst {
+      background: #fff8e8;
+      color: #8a6800;
+      border-color: rgba(200, 160, 0, .25);
+      font-size: .72rem;
+    }
+
+    .ck.cst:hover {
+      background: #ffefc0;
     }
 
     .ck.red {
       background: #fff0f0;
       color: #c0392b;
-      border-color: #f5c6c6
+      border-color: #f5c6c6;
     }
 
     .ck.red:hover {
-      background: #ffe0e0
+      background: #ffe0e0;
     }
 
     .ck.span2 {
-      grid-column: span 2
+      grid-column: span 2;
     }
 
     .ck.span3 {
-      grid-column: span 3
+      grid-column: span 3;
     }
 
     .use-btn {
       width: 100%;
       margin-top: 6px;
-      padding: 7px;
+      padding: 8px;
       background: linear-gradient(135deg, var(--gold), #d4a43a);
       color: var(--navy);
       border: none;
       border-radius: var(--radius-sm);
       font-family: 'DM Sans', sans-serif;
-      font-size: .82rem;
+      font-size: .83rem;
       font-weight: 700;
       cursor: pointer;
-      letter-spacing: .03em
+      letter-spacing: .03em;
     }
 
     .use-btn:hover {
-      opacity: .9
+      opacity: .9;
     }
 
-    /* INPUTS AREA */
+    /* INPUTS */
     .inp-group {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-bottom: .9rem
+      margin-bottom: .9rem;
     }
 
     .inp-label {
@@ -416,7 +448,7 @@
       font-weight: 600;
       letter-spacing: .08em;
       text-transform: uppercase;
-      color: var(--text2)
+      color: var(--text2);
     }
 
     .inp-label code {
@@ -425,7 +457,7 @@
       font-size: .85em;
       background: rgba(74, 125, 232, .08);
       padding: 1px 5px;
-      border-radius: 4px
+      border-radius: 4px;
     }
 
     input[type=number] {
@@ -438,12 +470,12 @@
       background: var(--cream);
       color: var(--text);
       outline: none;
-      transition: border-color .2s
+      transition: border-color .2s;
     }
 
     input[type=number]:focus {
       border-color: var(--accent2);
-      background: var(--white)
+      background: var(--white);
     }
 
     /* FORMULA */
@@ -452,7 +484,7 @@
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       padding: .9rem 1rem;
-      margin-bottom: .9rem
+      margin-bottom: .9rem;
     }
 
     .formula-title {
@@ -461,7 +493,7 @@
       letter-spacing: .09em;
       text-transform: uppercase;
       color: var(--text2);
-      margin-bottom: .5rem
+      margin-bottom: .5rem;
     }
 
     .formula-display {
@@ -472,7 +504,7 @@
       background: var(--white);
       border-radius: 6px;
       padding: .6rem .8rem;
-      border: 1px solid var(--border)
+      border: 1px solid var(--border);
     }
 
     /* DELTA */
@@ -481,7 +513,7 @@
       border: 1px solid rgba(46, 91, 189, .2);
       border-radius: var(--radius-sm);
       padding: .9rem 1rem;
-      margin-bottom: .9rem
+      margin-bottom: .9rem;
     }
 
     .delta-title {
@@ -490,7 +522,7 @@
       letter-spacing: .09em;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: .6rem
+      margin-bottom: .6rem;
     }
 
     .delta-row {
@@ -498,13 +530,13 @@
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
-      margin-bottom: .4rem
+      margin-bottom: .4rem;
     }
 
     .delta-op {
       font-family: 'JetBrains Mono', monospace;
       font-size: .95rem;
-      color: var(--text2)
+      color: var(--text2);
     }
 
     .delta-val {
@@ -517,7 +549,7 @@
       border-radius: 5px;
       min-width: 50px;
       text-align: center;
-      border: 1px solid rgba(46, 91, 189, .2)
+      border: 1px solid rgba(46, 91, 189, .2);
     }
 
     .delta-result-big {
@@ -527,14 +559,14 @@
       background: rgba(46, 91, 189, .08);
       padding: 5px 14px;
       border-radius: 6px;
-      border: 1px solid rgba(46, 91, 189, .2)
+      border: 1px solid rgba(46, 91, 189, .2);
     }
 
     .delta-formula-eq {
       font-size: .78rem;
       color: var(--text2);
       margin-top: .3rem;
-      font-family: 'JetBrains Mono', monospace
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* BUTTONS */
@@ -551,12 +583,12 @@
       cursor: pointer;
       letter-spacing: .03em;
       transition: all .2s;
-      margin-bottom: .6rem
+      margin-bottom: .6rem;
     }
 
     .btn-calc:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(13, 27, 62, .3)
+      box-shadow: 0 6px 20px rgba(13, 27, 62, .3);
     }
 
     .btn-reset {
@@ -570,19 +602,19 @@
       font-size: .85rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all .2s
+      transition: all .2s;
     }
 
     .btn-reset:hover {
       border-color: var(--navy);
-      color: var(--navy)
+      color: var(--navy);
     }
 
     /* RIGHT */
     .right-panel {
       display: flex;
       flex-direction: column;
-      gap: 1.4rem
+      gap: 1.4rem;
     }
 
     .card {
@@ -590,7 +622,7 @@
       border-radius: var(--radius);
       border: 1px solid var(--border);
       overflow: hidden;
-      box-shadow: var(--shadow)
+      box-shadow: var(--shadow);
     }
 
     .card-header {
@@ -598,7 +630,7 @@
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: .6rem
+      gap: .6rem;
     }
 
     .card-icon {
@@ -610,31 +642,31 @@
       justify-content: center;
       font-size: 1rem;
       background: linear-gradient(135deg, var(--navy), var(--accent));
-      color: var(--gold)
+      color: var(--gold);
     }
 
     .card-title {
       font-weight: 600;
       font-size: .9rem;
-      color: var(--navy)
+      color: var(--navy);
     }
 
     .card-body {
-      padding: 1rem 1.2rem
+      padding: 1rem 1.2rem;
     }
 
     .tbl-wrap {
-      overflow-x: auto
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: .82rem
+      font-size: .82rem;
     }
 
     thead tr {
-      background: linear-gradient(135deg, var(--navy), var(--navy2))
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
     }
 
     thead th {
@@ -645,30 +677,30 @@
       font-size: .72rem;
       letter-spacing: .06em;
       text-transform: uppercase;
-      white-space: nowrap
+      white-space: nowrap;
     }
 
     tbody tr {
       border-bottom: 1px solid var(--cream2);
-      transition: background .15s
+      transition: background .15s;
     }
 
     tbody tr:hover {
-      background: var(--cream)
+      background: var(--cream);
     }
 
     tbody td {
       padding: 7px 12px;
       font-family: 'JetBrains Mono', monospace;
       font-size: .8rem;
-      color: var(--text)
+      color: var(--text);
     }
 
     tbody tr.sum-row td {
       color: var(--navy);
       font-weight: 700;
       border-top: 2px solid var(--gold);
-      background: rgba(232, 184, 75, .07)
+      background: rgba(232, 184, 75, .07);
     }
 
     .result-bar {
@@ -678,64 +710,64 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: .9rem
+      margin-top: .9rem;
     }
 
     .result-lbl {
       font-size: .72rem;
       color: rgba(255, 255, 255, .55);
       letter-spacing: .06em;
-      text-transform: uppercase
+      text-transform: uppercase;
     }
 
     .result-val {
       font-family: 'DM Serif Display', serif;
       font-size: 1.8rem;
-      color: var(--gold)
+      color: var(--gold);
     }
 
     .result-formula {
       font-size: .7rem;
       color: rgba(255, 255, 255, .4);
       margin-top: 2px;
-      font-family: 'JetBrains Mono', monospace
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .chart-container {
       position: relative;
-      height: 270px
+      height: 270px;
     }
 
     .empty-state {
       text-align: center;
       padding: 2.5rem 1.5rem;
-      color: var(--text2)
+      color: var(--text2);
     }
 
     .empty-icon {
       font-size: 2rem;
       opacity: .25;
-      margin-bottom: .6rem
+      margin-bottom: .6rem;
     }
 
     .empty-text {
-      font-size: .87rem
+      font-size: .87rem;
     }
 
     @media(max-width:960px) {
       .section.active {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
       }
 
       .left-panel {
-        position: static
+        position: static;
       }
 
       header,
       nav,
       main {
         padding-left: 1rem;
-        padding-right: 1rem
+        padding-right: 1rem;
       }
     }
   </style>
@@ -797,131 +829,183 @@
     ];
 
     // ─────────────────────────────────────────────
-    // RENDER HTML de cada sección
+    // TECLADO CIENTÍFICO — filas de botones
+    // Formato: [label, texto_insertado, clase_css]
+    // ─────────────────────────────────────────────
+    const KB_ROWS = [
+      // — separador —
+      ['__SEP__', 'Trigonométricas'],
+      ['sin', 'sin(', 'fn'],
+      ['cos', 'cos(', 'fn'],
+      ['tan', 'tan(', 'fn'],
+      ['asin', 'asin(', 'fn'],
+      ['acos', 'acos(', 'fn'],
+      ['__SEP__', ''],
+      ['atan', 'atan(', 'fn'],
+      ['sec', '1/cos(', 'fn'],
+      ['csc', '1/sin(', 'fn'],
+      ['cot', '1/tan(', 'fn'],
+      ['sinc', 'sinc(', 'fn'],
+      // — hiperbólicas —
+      ['__SEP__', 'Hiperbólicas'],
+      ['sinh', 'sinh(', 'hyp'],
+      ['cosh', 'cosh(', 'hyp'],
+      ['tanh', 'tanh(', 'hyp'],
+      ['asinh', 'asinh(', 'hyp'],
+      ['acosh', 'acosh(', 'hyp'],
+      // — logaritmos y potencias —
+      ['__SEP__', 'Logaritmos y Potencias'],
+      ['ln', 'log(', 'fn'],
+      ['log₁₀', 'log10(', 'fn'],
+      ['log₂', 'log2(', 'fn'],
+      ['eˣ', 'exp(', 'fn'],
+      ['√x', 'sqrt(', 'fn'],
+      ['__SEP__', ''],
+      ['∛x', 'cbrt(', 'fn'],
+      ['x²', '^2', 'op'],
+      ['xⁿ', '^', 'op'],
+      ['10ˣ', '10^(', 'op'],
+      ['nPr', 'permutations(', 'fn'],
+      // — constantes —
+      ['__SEP__', 'Constantes y Funciones'],
+      ['π', 'pi', 'cst'],
+      ['e', 'e', 'cst'],
+      ['φ', '1.6180339887', 'cst'],
+      ['|x|', 'abs(', 'fn'],
+      ['ceil', 'ceil(', 'fn'],
+      ['__SEP__', ''],
+      ['floor', 'floor(', 'fn'],
+      ['round', 'round(', 'fn'],
+      ['sign', 'sign(', 'fn'],
+      ['mod', '%', 'op'],
+      ['!', '!', 'op'],
+      // — operadores y paréntesis —
+      ['__SEP__', 'Operadores'],
+      ['(', '(', 'op'],
+      [')', ')', 'op'],
+      ['+', '+', 'op'],
+      ['−', '-', 'op'],
+      ['×', '*', 'op'],
+      ['__SEP__', ''],
+      ['÷', '/', 'op'],
+      ['.', '.', ''],
+      ['x', 'x', 'fn'],
+      ['⌫', '__DEL__', 'red'],
+      ['C', '__CLR__', 'red'],
+      // — números —
+      ['__SEP__', 'Números'],
+      ['7', '7', ''], ['8', '8', ''], ['9', '9', ''], ['4', '4', ''], ['5', '5', ''],
+      ['6', '6', ''], ['1', '1', ''], ['2', '2', ''], ['3', '3', ''],
+      ['__SPAN2__', '0', ''], ['.', '.', ''],
+    ];
+
+    function buildCalcHTML(id) {
+      let html = `
+    <div class="calc-section">
+      <div class="calc-section-title">Calculadora Científica — f(x)</div>
+      <div class="calc-display" id="m${id}-display">f(x)</div>
+      <div class="calc-grid">`;
+
+      let i = 0;
+      while (i < KB_ROWS.length) {
+        const row = KB_ROWS[i];
+        if (row[0] === '__SEP__') {
+          if (row[1]) html += `<div class="calc-sep">${row[1]}</div>`;
+          else html += `<div class="calc-sep" style="border:none;padding-top:0;"></div>`;
+          i++; continue;
+        }
+        if (row[0] === '__SPAN2__') {
+          const ins = row[1].replace(/'/g, "\\'");
+          html += `<button class="ck span2 ${row[2]}" onclick="kbIns(${id},'${ins}')">${row[1]}</button>`;
+          i++; continue;
+        }
+        const ins = row[1].replace(/'/g, "\\'");
+        html += `<button class="ck ${row[2]}" onclick="kbIns(${id},'${ins}')">${row[0]}</button>`;
+        i++;
+      }
+
+      html += `</div>
+      <button class="use-btn" onclick="useFx(${id})">✓ Usar como f(x)</button>
+    </div>`;
+      return html;
+    }
+
+    // ─────────────────────────────────────────────
+    // RENDER SECCIONES
     // ─────────────────────────────────────────────
     function buildSections() {
-      const main = document.getElementById('mainContent');
-      main.innerHTML = METHODS.map(m => `
-  <section class="section${m.id === 0 ? ' active' : ''}" id="m${m.id}">
-    <!-- LEFT -->
-    <div class="left-panel">
-      <div class="method-header">
-        <div class="method-name-row">
-          <div class="method-name">${m.name}</div>
-          <div class="method-sub-lbl">${m.sub}</div>
-        </div>
-        <!-- INTEGRAL con A y B como inputs -->
-        <div class="integral-widget">
-          <div class="integral-column">
-            <div class="lim-label">b</div>
-            <input class="lim-input" type="number" id="m${m.id}-b" placeholder="b" step="any"/>
-            <input class="lim-input" type="number" id="m${m.id}-a" placeholder="a" step="any" style="margin-top:18px"/>
-            <div class="lim-label">a</div>
-          </div>
-          <div class="integral-symbol">∫</div>
-          <div class="fx-display" id="m${m.id}-fxdisp">f(x) dx</div>
-        </div>
+      const mainEl = document.getElementById('mainContent');
+      mainEl.innerHTML = METHODS.map(m => `
+<section class="section${m.id === 0 ? ' active' : ''}" id="m${m.id}">
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="method-header">
+      <div class="method-name-row">
+        <div class="method-name">${m.name}</div>
+        <div class="method-sub-lbl">${m.sub}</div>
       </div>
-
-      <div class="left-body">
-        <!-- CALCULADORA CIENTÍFICA -->
-        <div class="calc-section">
-          <div class="calc-section-title">Calculadora Científica — f(x)</div>
-          <div class="calc-display" id="m${m.id}-display" onclick="focusCalc(${m.id})">f(x)</div>
-          <div class="calc-grid">
-            <!-- Fila 1: funciones trig -->
-            <button class="ck fn" onclick="ins(${m.id},'Math.sin(')">sin</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.cos(')">cos</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.tan(')">tan</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.asin(')">asin</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.acos(')">acos</button>
-            <!-- Fila 2 -->
-            <button class="ck fn" onclick="ins(${m.id},'Math.atan(')">atan</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.log(')">ln</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.log10(')">log</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.sqrt(')">√</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.exp(')">eˣ</button>
-            <!-- Fila 3 -->
-            <button class="ck fn" onclick="ins(${m.id},'Math.abs(')">|x|</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.PI')">π</button>
-            <button class="ck fn" onclick="ins(${m.id},'Math.E')">e</button>
-            <button class="ck op" onclick="ins(${m.id},'**')">xⁿ</button>
-            <button class="ck op" onclick="ins(${m.id},'(')"> ( </button>
-            <!-- Fila 4 -->
-            <button class="ck" onclick="ins(${m.id},'7')">7</button>
-            <button class="ck" onclick="ins(${m.id},'8')">8</button>
-            <button class="ck" onclick="ins(${m.id},'9')">9</button>
-            <button class="ck op" onclick="ins(${m.id},'/')">÷</button>
-            <button class="ck op" onclick="ins(${m.id},')')"> ) </button>
-            <!-- Fila 5 -->
-            <button class="ck" onclick="ins(${m.id},'4')">4</button>
-            <button class="ck" onclick="ins(${m.id},'5')">5</button>
-            <button class="ck" onclick="ins(${m.id},'6')">6</button>
-            <button class="ck op" onclick="ins(${m.id},'*')">×</button>
-            <button class="ck fn" onclick="ins(${m.id},'x')">x</button>
-            <!-- Fila 6 -->
-            <button class="ck" onclick="ins(${m.id},'1')">1</button>
-            <button class="ck" onclick="ins(${m.id},'2')">2</button>
-            <button class="ck" onclick="ins(${m.id},'3')">3</button>
-            <button class="ck op" onclick="ins(${m.id},'-')">−</button>
-            <button class="ck op" onclick="ins(${m.id},'+')">+</button>
-            <!-- Fila 7 -->
-            <button class="ck span2" onclick="ins(${m.id},'0')">0</button>
-            <button class="ck" onclick="ins(${m.id},'.')">.</button>
-            <button class="ck red" onclick="bksp(${m.id})">⌫</button>
-            <button class="ck red" onclick="clr(${m.id})">C</button>
-          </div>
-          <button class="use-btn" onclick="useFx(${m.id})">✓ Usar como f(x)</button>
+      <div class="integral-widget">
+        <div class="integral-column">
+          <div class="lim-label">b</div>
+          <input class="lim-input" type="number" id="m${m.id}-b" placeholder="b" step="any"/>
+          <input class="lim-input" type="number" id="m${m.id}-a" placeholder="a" step="any" style="margin-top:18px"/>
+          <div class="lim-label">a</div>
         </div>
-
-        <!-- n si aplica -->
-        ${m.hasN ? `<div class="inp-group"><div class="inp-label">Subintervalos <code>n</code>${m.id === 1 || m.id === 2 ? '' : ''}</div><input type="number" id="m${m.id}-n" value="${m.id === 0 ? 6 : m.id === 3 ? 2 : 4}" min="2"/></div>` : ''}
-
-        <!-- FÓRMULA -->
-        <div class="formula-section">
-          <div class="formula-title">Fórmula del Método</div>
-          <div class="formula-display">${m.formula}</div>
-        </div>
-
-        <!-- DELTA -->
-        <div class="delta-section">
-          <div class="delta-title">Cálculo de Δ — ${m.deltaFormula}</div>
-          <div class="delta-row">
-            <span class="delta-op">Δ =</span>
-            <span class="delta-val" id="m${m.id}-dv-b">b</span>
-            <span class="delta-op">−</span>
-            <span class="delta-val" id="m${m.id}-dv-a">a</span>
-            <span class="delta-op">÷</span>
-            <span class="delta-val" id="m${m.id}-dv-div">${typeof m.divisor === 'number' ? m.divisor : 'n'}</span>
-            <span class="delta-op">=</span>
-            <span class="delta-result-big" id="m${m.id}-delta-res">—</span>
-          </div>
-          <div class="delta-formula-eq" id="m${m.id}-delta-eq"></div>
-        </div>
-
-        <button class="btn-calc" onclick="calc(${m.id})">Calcular Integral ∫</button>
-        <button class="btn-reset" onclick="resetMethod(${m.id})">↺ Resetear</button>
+        <div class="integral-symbol">∫</div>
+        <div class="fx-display" id="m${m.id}-fxdisp">f(x) dx</div>
       </div>
     </div>
 
-    <!-- RIGHT -->
-    <div class="right-panel">
-      <div class="card">
-        <div class="card-header"><div class="card-icon">∑</div><div class="card-title">Tabla de Iteraciones y Sumatoria</div></div>
-        <div class="card-body"><div id="m${m.id}-tbl">${emptyHTML()}</div></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-icon">◉</div><div class="card-title">Puntos para Graficar</div></div>
-        <div class="card-body"><div id="m${m.id}-pts">${emptyHTML('Los puntos xᵢ, f(xᵢ) aparecen aquí')}</div></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-icon">〜</div><div class="card-title">Gráfica de f(x)</div></div>
-        <div class="card-body"><div class="chart-container"><canvas id="chart${m.id}"></canvas></div></div>
-      </div>
-    </div>
-  </section>`).join('');
+    <div class="left-body">
+      ${buildCalcHTML(m.id)}
 
-      // Setup listeners A/B → delta autocomplete
+      ${m.hasN ? `<div class="inp-group">
+        <div class="inp-label">Subintervalos <code>n</code></div>
+        <input type="number" id="m${m.id}-n" value="${m.id === 0 ? 6 : m.id === 3 ? 2 : 4}" min="2"/>
+      </div>` : ''}
+
+      <div class="formula-section">
+        <div class="formula-title">Fórmula del Método</div>
+        <div class="formula-display">${m.formula}</div>
+      </div>
+
+      <div class="delta-section">
+        <div class="delta-title">Cálculo de Δ — ${m.deltaFormula}</div>
+        <div class="delta-row">
+          <span class="delta-op">Δ =</span>
+          <span class="delta-val" id="m${m.id}-dv-b">b</span>
+          <span class="delta-op">−</span>
+          <span class="delta-val" id="m${m.id}-dv-a">a</span>
+          <span class="delta-op">÷</span>
+          <span class="delta-val" id="m${m.id}-dv-div">${typeof m.divisor === 'number' ? m.divisor : 'n'}</span>
+          <span class="delta-op">=</span>
+          <span class="delta-result-big" id="m${m.id}-delta-res">—</span>
+        </div>
+        <div class="delta-formula-eq" id="m${m.id}-delta-eq"></div>
+      </div>
+
+      <button class="btn-calc" onclick="calc(${m.id})">Calcular Integral ∫</button>
+      <button class="btn-reset" onclick="resetMethod(${m.id})">↺ Resetear</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">∑</div><div class="card-title">Tabla de Iteraciones y Sumatoria</div></div>
+      <div class="card-body"><div id="m${m.id}-tbl">${emptyHTML()}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">◉</div><div class="card-title">Puntos para Graficar</div></div>
+      <div class="card-body"><div id="m${m.id}-pts">${emptyHTML('Los puntos xᵢ, f(xᵢ) aparecen aquí')}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">〜</div><div class="card-title">Gráfica de f(x)</div></div>
+      <div class="card-body"><div class="chart-container"><canvas id="chart${m.id}"></canvas></div></div>
+    </div>
+  </div>
+</section>`).join('');
+
       METHODS.forEach(m => setupABListeners(m));
     }
 
@@ -938,19 +1022,25 @@
     }
 
     // ─────────────────────────────────────────────
-    // CALCULADORA: estado por método
+    // CALCULADORA — estado por método
     // ─────────────────────────────────────────────
     const calcExpr = {};
     function getExpr(id) { return calcExpr[id] || ''; }
-    function setExpr(id, v) { calcExpr[id] = v; document.getElementById('m' + id + '-display').textContent = v || 'f(x)'; }
-
-    function ins(id, ch) { setExpr(id, getExpr(id) + ch); }
-    function bksp(id) { const e = getExpr(id); setExpr(id, e.slice(0, -1)); }
-    function clr(id) { setExpr(id, ''); }
-    function focusCalc(id) {/* visual only */ }
+    function setExpr(id, v) {
+      calcExpr[id] = v;
+      document.getElementById('m' + id + '-display').textContent = v || 'f(x)';
+    }
+    function kbIns(id, ch) {
+      if (ch === '__CLR__') { setExpr(id, ''); return; }
+      if (ch === '__DEL__') { setExpr(id, getExpr(id).slice(0, -1)); return; }
+      setExpr(id, getExpr(id) + ch);
+    }
     function useFx(id) {
       const expr = getExpr(id);
-      if (!expr) { alert('Escribe primero una función en la calculadora.'); return; }
+      if (!expr) { alert('Escribe primero una función usando la calculadora.'); return; }
+      // test rápido
+      try { math.evaluate(expr, { x: 1 }); }
+      catch (e) { alert('Función inválida: ' + e.message + '\n\nUsa el teclado científico. Ejemplo: sin(x), x^2+1, exp(x)'); return; }
       document.getElementById('m' + id + '-fxdisp').textContent = expr + ' dx';
     }
 
@@ -962,10 +1052,8 @@
       const bEl = document.getElementById('m' + m.id + '-b');
       const nEl = m.hasN ? document.getElementById('m' + m.id + '-n') : null;
       function upd() {
-        const a = parseFloat(aEl.value);
-        const b = parseFloat(bEl.value);
+        const a = parseFloat(aEl.value), b = parseFloat(bEl.value);
         const div = typeof m.divisor === 'number' ? m.divisor : (nEl ? parseFloat(nEl.value) : NaN);
-        // update display spans
         document.getElementById('m' + m.id + '-dv-b').textContent = isNaN(b) ? 'b' : b;
         document.getElementById('m' + m.id + '-dv-a').textContent = isNaN(a) ? 'a' : a;
         document.getElementById('m' + m.id + '-dv-div').textContent = isNaN(div) ? 'n' : div;
@@ -984,10 +1072,11 @@
     }
 
     // ─────────────────────────────────────────────
-    // EVALUAR f(x)
+    // EVALUAR f(x) — usa math.js (NO eval nativo)
     // ─────────────────────────────────────────────
     function evalF(expr, x) {
-      try { return Function('x', 'return ' + expr)(x); } catch { return NaN; }
+      try { return math.evaluate(expr, { x }); }
+      catch { return NaN; }
     }
 
     // ─────────────────────────────────────────────
@@ -997,10 +1086,8 @@
     function destroyChart(i) { if (charts[i]) { charts[i].destroy(); delete charts[i]; } }
     function drawChart(idx, fxExpr, pts) {
       destroyChart(idx);
-      const xs = pts.map(p => p.x);
-      const minX = Math.min(...xs), maxX = Math.max(...xs);
-      const steps = 300, step = (maxX - minX) / steps;
-      const curve = [];
+      const xs = pts.map(p => p.x), minX = Math.min(...xs), maxX = Math.max(...xs);
+      const steps = 300, step = (maxX - minX) / steps, curve = [];
       for (let i = 0; i <= steps; i++) { const x = minX + i * step; curve.push({ x, y: evalF(fxExpr, x) }); }
       const ctx = document.getElementById('chart' + idx).getContext('2d');
       charts[idx] = new Chart(ctx, {
@@ -1028,7 +1115,7 @@
     function renderTable(rows, I, deltaVal, multiplierStr, wrapId) {
       const sumCoefFx = rows.reduce((s, r) => s + r.coefFx, 0);
       let html = `<div class="tbl-wrap"><table>
-    <thead><tr><th>i</th><th>xᵢ</th><th>f(xᵢ)</th><th>Coef.</th><th>Coef × f(xᵢ)</th></tr></thead><tbody>`;
+    <thead><tr><th>I</th><th>Xᵢ</th><th>F(Xᵢ)</th><th>COEF.</th><th>COEF × F(Xᵢ)</th></tr></thead><tbody>`;
       rows.forEach(r => {
         html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td><td>${r.coef}</td><td>${r.coefFx.toFixed(8)}</td></tr>`;
       });
@@ -1046,7 +1133,7 @@
 
     function renderPoints(rows, wrapId) {
       let html = `<div class="tbl-wrap"><table>
-    <thead><tr><th>i</th><th>xᵢ</th><th>f(xᵢ)</th></tr></thead><tbody>`;
+    <thead><tr><th>I</th><th>Xᵢ</th><th>F(Xᵢ)</th></tr></thead><tbody>`;
       rows.forEach(r => {
         html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td></tr>`;
       });
@@ -1058,14 +1145,15 @@
     // RESET
     // ─────────────────────────────────────────────
     function resetMethod(id) {
-      clr(id);
+      setExpr(id, '');
       document.getElementById('m' + id + '-fxdisp').textContent = 'f(x) dx';
       document.getElementById('m' + id + '-a').value = '';
       document.getElementById('m' + id + '-b').value = '';
-      const nEl = document.getElementById('m' + id + '-n'); if (nEl) nEl.value = id === 0 ? 6 : id === 3 ? 2 : 4;
+      const nEl = document.getElementById('m' + id + '-n');
+      if (nEl) nEl.value = id === 0 ? 6 : id === 3 ? 2 : 4;
       ['dv-b', 'dv-a', 'dv-div'].forEach(k => {
         const el = document.getElementById('m' + id + '-' + k);
-        if (el) el.textContent = k.includes('div') ? METHODS[id].divisor === 'n' ? 'n' : METHODS[id].divisor : k.includes('b') ? 'b' : 'a';
+        if (el) el.textContent = k.includes('div') ? (METHODS[id].divisor === 'n' ? 'n' : METHODS[id].divisor) : k.includes('b') ? 'b' : 'a';
       });
       document.getElementById('m' + id + '-delta-res').textContent = '—';
       document.getElementById('m' + id + '-delta-eq').textContent = '';
@@ -1079,11 +1167,11 @@
     // ─────────────────────────────────────────────
     function calc(id) {
       const fxExpr = getExpr(id);
-      if (!fxExpr) { alert('Primero escribe una función f(x) usando la calculadora y presiona "Usar como f(x)".'); return; }
+      if (!fxExpr) { alert('Escribe una función f(x) usando la calculadora y presiona "✓ Usar como f(x)".'); return; }
       const a = parseFloat(document.getElementById('m' + id + '-a').value);
       const b = parseFloat(document.getElementById('m' + id + '-b').value);
-      if (isNaN(a) || isNaN(b)) { alert('Ingresa los límites a y b en el símbolo de integración.'); return; }
-
+      if (isNaN(a) || isNaN(b)) { alert('Ingresa los límites a y b.'); return; }
+      if (a >= b) { alert('El límite a debe ser menor que b.'); return; }
       if (id === 0) calcTrap(a, b, fxExpr);
       else if (id === 1) calcBoole(a, b, fxExpr);
       else if (id === 2) calcS38(a, b, fxExpr);
@@ -1092,7 +1180,7 @@
     }
 
     // ─────────────────────────────────────────────
-    // MÉTODOS
+    // MÉTODOS DE CÁLCULO
     // ─────────────────────────────────────────────
 
     // 0 — TRAPEZOIDAL
@@ -1164,14 +1252,19 @@
     }
 
     // 4 — SIMPSON ABIERTO
+    // Fórmula: I = (Δ/3)[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + ... + f(xₙ)]
+    // Pesos:   i=0 → 1,  i par interior → 2,  i impar → 4,  i=n → 1
     function calcSA(a, b, fx) {
       let n = parseInt(document.getElementById('m4-n').value) || 4;
-      if (n % 2 !== 0) n++;
+      if (n % 2 !== 0) n++;          // n debe ser par
       const d = (b - a) / n;
       const rows = [];
-      for (let i = 1; i <= n; i++) {
+      for (let i = 0; i <= n; i++) {   // empieza en 0, incluye x₀
         const x = a + i * d, f = evalF(fx, x);
-        let coef = i === n ? 1 : i % 2 !== 0 ? 4 : 2;
+        let coef;
+        if (i === 0 || i === n) coef = 1;   // extremos
+        else if (i % 2 !== 0) coef = 4;   // impares
+        else coef = 2;   // pares interiores
         rows.push({ i, x, fx: f, coef, coefFx: coef * f });
       }
       const sum = rows.reduce((s, r) => s + r.coefFx, 0);
