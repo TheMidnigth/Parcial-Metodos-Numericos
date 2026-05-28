@@ -101,7 +101,7 @@
       text-transform: uppercase;
     }
 
-    /* NAV */
+    /* NAV — DESKTOP */
     nav {
       background: var(--white);
       border-bottom: 1px solid var(--border);
@@ -111,6 +111,16 @@
       top: 88px;
       z-index: 99;
       box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+      overflow-x: auto;
+    }
+
+    nav::-webkit-scrollbar {
+      height: 3px;
+    }
+
+    nav::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
     }
 
     .nav-btn {
@@ -129,7 +139,8 @@
       white-space: nowrap;
       border-bottom: 3px solid transparent;
       margin-bottom: -1px;
-      transition: color .2s;
+      transition: all .2s;
+      flex-shrink: 0;
     }
 
     .nav-btn:hover {
@@ -160,6 +171,262 @@
     .nav-btn.active .nav-num {
       background: var(--navy);
       color: var(--gold);
+    }
+
+    /* ── HAMBURGER BUTTON (solo móvil) ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: rgba(232, 184, 75, .15);
+      border: 1px solid rgba(232, 184, 75, .35);
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* ── DRAWER MÓVIL ── */
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 200;
+    }
+
+    .nav-drawer.open {
+      display: block;
+    }
+
+    .nav-drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 27, 62, .55);
+      backdrop-filter: blur(3px);
+    }
+
+    .nav-drawer-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 78%;
+      max-width: 300px;
+      height: 100%;
+      background: var(--white);
+      box-shadow: -8px 0 32px rgba(0, 0, 0, .2);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .nav-drawer.open .nav-drawer-panel {
+      transform: translateX(0);
+    }
+
+    .nav-drawer-header {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      padding: 20px 20px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-drawer-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .nav-drawer-close {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 6px;
+      color: var(--white);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-drawer-close:hover {
+      background: rgba(255, 255, 255, .2);
+    }
+
+    .nav-drawer-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-drawer-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all .18s;
+      text-align: left;
+      width: 100%;
+    }
+
+    .nav-drawer-btn:hover {
+      background: var(--cream2);
+      border-color: var(--navy);
+    }
+
+    .nav-drawer-btn.active {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .nav-drawer-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cream2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--text2);
+      flex-shrink: 0;
+    }
+
+    .nav-drawer-btn.active .nav-drawer-num {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    .nav-drawer-method-name {
+      flex: 1;
+    }
+
+    .nav-drawer-sub {
+      font-size: .7rem;
+      color: var(--text2);
+      margin-top: 1px;
+      font-weight: 400;
+    }
+
+    .nav-drawer-btn.active .nav-drawer-sub {
+      color: rgba(232, 184, 75, .7);
+    }
+
+    .nav-drawer-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-active-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .nav-active-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy);
+      color: var(--gold);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:700px) {
+      header {
+        height: auto;
+        padding: 12px 16px;
+      }
+
+      .header-sub {
+        display: none;
+      }
+
+      .integral-icon-hdr {
+        font-size: 2rem;
+      }
+
+      .header-title {
+        font-size: 1.1rem;
+      }
+
+      .header-badge {
+        display: none;
+      }
+
+      /* ocultar nav normal, mostrar hamburguesa */
+      nav {
+        display: none !important;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      main {
+        padding: 1rem 12px;
+      }
+
+      .section.active {
+        grid-template-columns: 1fr;
+      }
+
+      .left-panel {
+        position: static;
+      }
     }
 
     /* MAIN */
@@ -784,7 +1051,55 @@
       </div>
     </div>
     <div class="header-badge">5 Métodos</div>
+    <!-- Hamburguesa (solo móvil) -->
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleDrawer()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
   </header>
+
+  <!-- DRAWER MÓVIL -->
+  <div class="nav-drawer" id="navDrawer">
+    <div class="nav-drawer-overlay" onclick="closeDrawer()"></div>
+    <div class="nav-drawer-panel">
+      <div class="nav-drawer-header">
+        <div class="nav-drawer-title">∫ Métodos Numéricos</div>
+        <button class="nav-drawer-close" onclick="closeDrawer()">✕</button>
+      </div>
+      <div class="nav-drawer-body">
+        <button class="nav-drawer-btn active" onclick="switchMethod(0);closeDrawer()">
+          <span class="nav-drawer-num">1</span>
+          <div class="nav-drawer-method-name">Trapezoidal<div class="nav-drawer-sub">Regla Compuesta</div>
+          </div>
+        </button>
+        <button class="nav-drawer-btn" onclick="switchMethod(1);closeDrawer()">
+          <span class="nav-drawer-num">2</span>
+          <div class="nav-drawer-method-name">Jorge Boole<div class="nav-drawer-sub">Newton-Cotes Cerrado</div>
+          </div>
+        </button>
+        <button class="nav-drawer-btn" onclick="switchMethod(2);closeDrawer()">
+          <span class="nav-drawer-num">3</span>
+          <div class="nav-drawer-method-name">Simpson 3/8<div class="nav-drawer-sub">Newton-Cotes Orden 3</div>
+          </div>
+        </button>
+        <button class="nav-drawer-btn" onclick="switchMethod(3);closeDrawer()">
+          <span class="nav-drawer-num">4</span>
+          <div class="nav-drawer-method-name">Simpson 1/3<div class="nav-drawer-sub">Newton-Cotes Orden 2</div>
+          </div>
+        </button>
+        <button class="nav-drawer-btn" onclick="switchMethod(4);closeDrawer()">
+          <span class="nav-drawer-num">5</span>
+          <div class="nav-drawer-method-name">Simpson Abierto<div class="nav-drawer-sub">n particiones pares</div>
+          </div>
+        </button>
+      </div>
+      <div class="nav-drawer-footer">
+        <div class="nav-active-label">Método activo</div>
+        <div class="nav-active-pill" id="drawerActivePill">
+          <span id="drawerActiveNum">1</span> <span id="drawerActiveName">Trapezoidal</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <nav>
     <button class="nav-btn active" onclick="switchMethod(0)"><span class="nav-num">1</span>Trapezoidal</button>
@@ -797,6 +1112,27 @@
   <main id="mainContent"></main>
 
   <script>
+    // ─────────────────────────────────────────────
+    // DRAWER MÓVIL
+    // ─────────────────────────────────────────────
+    const DRAWER_NAMES = ['Trapezoidal', 'Jorge Boole', 'Simpson 3/8', 'Simpson 1/3', 'Simpson Abierto'];
+    function toggleDrawer() {
+      const d = document.getElementById('navDrawer');
+      const b = document.getElementById('hamburgerBtn');
+      const isOpen = d.classList.contains('open');
+      isOpen ? closeDrawer() : openDrawer();
+    }
+    function openDrawer() {
+      document.getElementById('navDrawer').classList.add('open');
+      document.getElementById('hamburgerBtn').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      document.getElementById('navDrawer').classList.remove('open');
+      document.getElementById('hamburgerBtn').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
     // ─────────────────────────────────────────────
     // CONFIG DE MÉTODOS
     // ─────────────────────────────────────────────
@@ -1019,6 +1355,12 @@
     function switchMethod(i) {
       document.querySelectorAll('.section').forEach((s, j) => s.classList.toggle('active', i === j));
       document.querySelectorAll('.nav-btn').forEach((b, j) => b.classList.toggle('active', i === j));
+      // actualizar drawer
+      document.querySelectorAll('.nav-drawer-btn').forEach((b, j) => b.classList.toggle('active', i === j));
+      const numEl = document.getElementById('drawerActiveNum');
+      const nameEl = document.getElementById('drawerActiveName');
+      if (numEl) numEl.textContent = i + 1;
+      if (nameEl) nameEl.textContent = DRAWER_NAMES[i];
     }
 
     // ─────────────────────────────────────────────
