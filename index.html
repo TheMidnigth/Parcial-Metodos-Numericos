@@ -11,6 +11,329 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.0/math.js"></script>
   <style>
+    /* ══════════════════════════════════════════════
+       PANTALLA DE CARGA
+    ══════════════════════════════════════════════ */
+    #splash-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: linear-gradient(160deg, #0d1b3e 0%, #162250 55%, #1e3a6e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+
+    #splash-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-topline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #e8b84b 30%, #f5d080 50%, #e8b84b 70%, transparent);
+      animation: spl-shimmer 2.5s ease-in-out infinite;
+    }
+
+    @keyframes spl-shimmer {
+
+      0%,
+      100% {
+        opacity: .6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .splash-bg-symbol {
+      position: absolute;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(14rem, 35vw, 26rem);
+      color: rgba(232, 184, 75, .04);
+      line-height: 1;
+      user-select: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .spl-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(232, 184, 75, .1);
+      animation: spl-float linear infinite;
+    }
+
+    @keyframes spl-float {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: .12;
+      }
+
+      50% {
+        transform: translateY(-28px) scale(1.12);
+        opacity: .22;
+      }
+
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: .12;
+      }
+    }
+
+    .splash-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 520px;
+      padding: 0 24px;
+    }
+
+    .splash-icon {
+      font-family: 'DM Serif Display', serif;
+      font-size: 4.2rem;
+      color: #e8b84b;
+      line-height: 1;
+      margin-bottom: 10px;
+      animation: spl-pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes spl-pulse {
+
+      0%,
+      100% {
+        text-shadow: 0 0 0 rgba(232, 184, 75, 0);
+      }
+
+      50% {
+        text-shadow: 0 0 32px rgba(232, 184, 75, .5);
+      }
+    }
+
+    .splash-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.6rem, 5vw, 2rem);
+      color: #fff;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .splash-title span {
+      color: #e8b84b;
+    }
+
+    .splash-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .7rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .38);
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .splash-divider {
+      width: 56px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #e8b84b, transparent);
+      margin-bottom: 22px;
+    }
+
+    .splash-badges {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 22px;
+      opacity: 0;
+      transition: opacity .7s ease;
+    }
+
+    .splash-badges.spl-vis {
+      opacity: 1;
+    }
+
+    .splash-badge {
+      background: rgba(46, 91, 189, .2);
+      border: 1px solid rgba(74, 125, 232, .3);
+      color: rgba(255, 255, 255, .55);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .splash-made-by {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .63rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .3);
+      margin-bottom: 14px;
+    }
+
+    .splash-members {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      width: 100%;
+      margin-bottom: 28px;
+    }
+
+    .spl-card {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      background: rgba(255, 255, 255, .055);
+      border: 1px solid rgba(232, 184, 75, .16);
+      border-radius: 10px;
+      padding: 10px 15px;
+      opacity: 0;
+      transform: translateX(-22px);
+      transition: opacity .5s ease, transform .5s ease, background .2s, border-color .2s;
+    }
+
+    .spl-card:hover {
+      background: rgba(255, 255, 255, .1);
+      border-color: rgba(232, 184, 75, .38);
+    }
+
+    .spl-card.spl-vis {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .spl-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(232, 184, 75, .13);
+      border: 1.5px solid rgba(232, 184, 75, .42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .73rem;
+      font-weight: 500;
+      color: #e8b84b;
+      flex-shrink: 0;
+    }
+
+    .spl-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .spl-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spl-role {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .35);
+      margin-top: 1px;
+      letter-spacing: .04em;
+    }
+
+    .spl-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(232, 184, 75, .5);
+      flex-shrink: 0;
+    }
+
+    .splash-prog-wrap {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .splash-prog-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2e5bbd, #e8b84b);
+      border-radius: 2px;
+      transition: width .4s ease;
+    }
+
+    .splash-prog-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .28);
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+
+    .splash-enter-btn {
+      margin-top: 18px;
+      padding: 12px 44px;
+      background: linear-gradient(135deg, #e8b84b, #d4a43a);
+      color: #0d1b3e;
+      border: none;
+      border-radius: 30px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .55s ease, transform .55s ease, box-shadow .2s;
+    }
+
+    .splash-enter-btn:hover {
+      box-shadow: 0 8px 28px rgba(232, 184, 75, .45);
+    }
+
+    .splash-enter-btn.spl-vis {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ══════════════════════════════════════════════
+       APP PRINCIPAL
+    ══════════════════════════════════════════════ */
+    #app-root {
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+
+    #app-root.app-visible {
+      opacity: 1;
+    }
+
+    /* ══════════════════════════════════════════════
+       ESTILOS ORIGINALES DE LA APP (sin cambios)
+    ══════════════════════════════════════════════ */
     :root {
       --navy: #0d1b3e;
       --navy2: #162250;
@@ -42,7 +365,6 @@
       min-height: 100vh;
     }
 
-    /* HEADER */
     header {
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #1e3a6e 100%);
       padding: 0 2.5rem;
@@ -101,7 +423,6 @@
       text-transform: uppercase;
     }
 
-    /* NAV — DESKTOP */
     nav {
       background: var(--white);
       border-bottom: 1px solid var(--border);
@@ -173,7 +494,6 @@
       color: var(--gold);
     }
 
-    /* ── HAMBURGER BUTTON (solo móvil) ── */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -212,7 +532,6 @@
       transform: translateY(-7px) rotate(-45deg);
     }
 
-    /* ── DRAWER MÓVIL ── */
     .nav-drawer {
       display: none;
       position: fixed;
@@ -384,7 +703,6 @@
       font-weight: 600;
     }
 
-    /* ── RESPONSIVE ── */
     @media(max-width:700px) {
       header {
         height: auto;
@@ -407,7 +725,6 @@
         display: none;
       }
 
-      /* ocultar nav normal, mostrar hamburguesa */
       nav {
         display: none !important;
       }
@@ -429,7 +746,6 @@
       }
     }
 
-    /* MAIN */
     main {
       max-width: 1440px;
       margin: 0 auto;
@@ -447,7 +763,6 @@
       align-items: start;
     }
 
-    /* LEFT PANEL */
     .left-panel {
       background: var(--white);
       border-radius: var(--radius);
@@ -482,7 +797,6 @@
       margin-top: 3px;
     }
 
-    /* INTEGRAL WIDGET */
     .integral-widget {
       display: flex;
       align-items: center;
@@ -543,14 +857,10 @@
       margin-left: 4px;
     }
 
-    /* LEFT BODY */
     .left-body {
       padding: 1.2rem 1.3rem;
     }
 
-    /* ══════════════════════════════════
-       CALCULADORA CIENTÍFICA (nueva)
-    ══════════════════════════════════ */
     .calc-section {
       margin-bottom: 1rem;
     }
@@ -578,14 +888,12 @@
       cursor: text;
     }
 
-    /* grid principal 5 cols */
     .calc-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 4px;
     }
 
-    /* sección label dentro de la calc */
     .calc-sep {
       grid-column: span 5;
       font-size: .58rem;
@@ -702,7 +1010,6 @@
       opacity: .9;
     }
 
-    /* INPUTS */
     .inp-group {
       display: flex;
       flex-direction: column;
@@ -745,7 +1052,6 @@
       background: var(--white);
     }
 
-    /* FORMULA */
     .formula-section {
       background: var(--cream);
       border-radius: var(--radius-sm);
@@ -774,7 +1080,6 @@
       border: 1px solid var(--border);
     }
 
-    /* DELTA */
     .delta-section {
       background: linear-gradient(135deg, rgba(46, 91, 189, .06), rgba(74, 125, 232, .04));
       border: 1px solid rgba(46, 91, 189, .2);
@@ -836,7 +1141,6 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* BUTTONS */
     .btn-calc {
       width: 100%;
       padding: 11px;
@@ -877,7 +1181,6 @@
       color: var(--navy);
     }
 
-    /* RIGHT */
     .right-panel {
       display: flex;
       flex-direction: column;
@@ -1042,193 +1345,222 @@
 
 <body>
 
-  <header>
-    <div class="header-left">
-      <div class="integral-icon-hdr">∫</div>
-      <div>
-        <div class="header-title">Métodos <span>Numéricos</span></div>
-        <div class="header-sub">Integración Numérica · Trabajo Final de Curso</div>
-      </div>
+  <!-- ══════════════════════════════════════
+  PANTALLA DE CARGA
+  ══════════════════════════════════════ -->
+  <div id="splash-overlay">
+    <div class="splash-topline"></div>
+    <div class="splash-bg-symbol">∫</div>
+    <div class="spl-particle" style="width:80px;height:80px;top:10%;left:8%;animation-duration:6.5s;animation-delay:0s">
     </div>
-    <div class="header-badge">5 Métodos</div>
-    <!-- Hamburguesa (solo móvil) -->
-    <button class="hamburger" id="hamburgerBtn" onclick="toggleDrawer()" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
-  </header>
+    <div class="spl-particle" style="width:50px;height:50px;top:72%;left:5%;animation-duration:8s;animation-delay:1s">
+    </div>
+    <div class="spl-particle"
+      style="width:100px;height:100px;top:18%;right:6%;animation-duration:7.2s;animation-delay:1.8s"></div>
+    <div class="spl-particle"
+      style="width:40px;height:40px;top:62%;right:9%;animation-duration:5.5s;animation-delay:.5s"></div>
+    <div class="spl-particle"
+      style="width:65px;height:65px;top:85%;left:42%;animation-duration:9s;animation-delay:1.3s"></div>
+    <div class="spl-particle" style="width:30px;height:30px;top:35%;left:3%;animation-duration:7s;animation-delay:.8s">
+    </div>
+    <div class="spl-particle"
+      style="width:45px;height:45px;top:50%;right:3%;animation-duration:6s;animation-delay:2.2s"></div>
 
-  <!-- DRAWER MÓVIL -->
-  <div class="nav-drawer" id="navDrawer">
-    <div class="nav-drawer-overlay" onclick="closeDrawer()"></div>
-    <div class="nav-drawer-panel">
-      <div class="nav-drawer-header">
-        <div class="nav-drawer-title">∫ Métodos Numéricos</div>
-        <button class="nav-drawer-close" onclick="closeDrawer()">✕</button>
+    <div class="splash-inner">
+      <div class="splash-icon">∫</div>
+      <div class="splash-title">Métodos <span>Numéricos</span></div>
+      <div class="splash-sub">Integración Numérica · Trabajo Final de Curso</div>
+      <div class="splash-divider"></div>
+      <div class="splash-badges" id="splBadges">
+        <span class="splash-badge">Trapezoidal</span>
+        <span class="splash-badge">Jorge Boole</span>
+        <span class="splash-badge">Simpson 3/8</span>
+        <span class="splash-badge">Simpson 1/3</span>
+        <span class="splash-badge">Abierto</span>
       </div>
-      <div class="nav-drawer-body">
-        <button class="nav-drawer-btn active" onclick="switchMethod(0);closeDrawer()">
-          <span class="nav-drawer-num">1</span>
-          <div class="nav-drawer-method-name">Trapezoidal<div class="nav-drawer-sub">Regla Compuesta</div>
-          </div>
-        </button>
-        <button class="nav-drawer-btn" onclick="switchMethod(1);closeDrawer()">
-          <span class="nav-drawer-num">2</span>
-          <div class="nav-drawer-method-name">Jorge Boole<div class="nav-drawer-sub">Newton-Cotes Cerrado</div>
-          </div>
-        </button>
-        <button class="nav-drawer-btn" onclick="switchMethod(2);closeDrawer()">
-          <span class="nav-drawer-num">3</span>
-          <div class="nav-drawer-method-name">Simpson 3/8<div class="nav-drawer-sub">Newton-Cotes Orden 3</div>
-          </div>
-        </button>
-        <button class="nav-drawer-btn" onclick="switchMethod(3);closeDrawer()">
-          <span class="nav-drawer-num">4</span>
-          <div class="nav-drawer-method-name">Simpson 1/3<div class="nav-drawer-sub">Newton-Cotes Orden 2</div>
-          </div>
-        </button>
-        <button class="nav-drawer-btn" onclick="switchMethod(4);closeDrawer()">
-          <span class="nav-drawer-num">5</span>
-          <div class="nav-drawer-method-name">Simpson Abierto<div class="nav-drawer-sub">n particiones pares</div>
-          </div>
-        </button>
+      <div class="splash-made-by">Elaborado por</div>
+      <div class="splash-members" id="splMembers"></div>
+      <div class="splash-prog-wrap">
+        <div class="splash-prog-bar" id="splProgBar"></div>
       </div>
-      <div class="nav-drawer-footer">
-        <div class="nav-active-label">Método activo</div>
-        <div class="nav-active-pill" id="drawerActivePill">
-          <span id="drawerActiveNum">1</span> <span id="drawerActiveName">Trapezoidal</span>
-        </div>
-      </div>
+      <div class="splash-prog-label" id="splProgLabel">Iniciando…</div>
+      <button class="splash-enter-btn" id="splEnterBtn" onclick="enterApp()">∫ Ingresar al Proyecto</button>
     </div>
   </div>
 
-  <nav>
-    <button class="nav-btn active" onclick="switchMethod(0)"><span class="nav-num">1</span>Trapezoidal</button>
-    <button class="nav-btn" onclick="switchMethod(1)"><span class="nav-num">2</span>Jorge Boole</button>
-    <button class="nav-btn" onclick="switchMethod(2)"><span class="nav-num">3</span>Simpson 3/8</button>
-    <button class="nav-btn" onclick="switchMethod(3)"><span class="nav-num">4</span>Simpson 1/3</button>
-    <button class="nav-btn" onclick="switchMethod(4)"><span class="nav-num">5</span>Simpson Abierto</button>
-  </nav>
+  <!-- ══════════════════════════════════════
+       APP PRINCIPAL
+  ══════════════════════════════════════ -->
+  <div id="app-root">
+    <header>
+      <div class="header-left">
+        <div class="integral-icon-hdr">∫</div>
+        <div>
+          <div class="header-title">Métodos <span>Numéricos</span></div>
+          <div class="header-sub">Integración Numérica · Trabajo Final de Curso</div>
+        </div>
+      </div>
+      <div class="header-badge">5 Métodos</div>
+      <button class="hamburger" id="hamburgerBtn" onclick="toggleDrawer()" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
 
-  <main id="mainContent"></main>
+    <div class="nav-drawer" id="navDrawer">
+      <div class="nav-drawer-overlay" onclick="closeDrawer()"></div>
+      <div class="nav-drawer-panel">
+        <div class="nav-drawer-header">
+          <div class="nav-drawer-title">∫ Métodos Numéricos</div>
+          <button class="nav-drawer-close" onclick="closeDrawer()">✕</button>
+        </div>
+        <div class="nav-drawer-body">
+          <button class="nav-drawer-btn active" onclick="switchMethod(0);closeDrawer()">
+            <span class="nav-drawer-num">1</span>
+            <div class="nav-drawer-method-name">Trapezoidal<div class="nav-drawer-sub">Regla Compuesta</div>
+            </div>
+          </button>
+          <button class="nav-drawer-btn" onclick="switchMethod(1);closeDrawer()">
+            <span class="nav-drawer-num">2</span>
+            <div class="nav-drawer-method-name">Jorge Boole<div class="nav-drawer-sub">Newton-Cotes Cerrado</div>
+            </div>
+          </button>
+          <button class="nav-drawer-btn" onclick="switchMethod(2);closeDrawer()">
+            <span class="nav-drawer-num">3</span>
+            <div class="nav-drawer-method-name">Simpson 3/8<div class="nav-drawer-sub">Newton-Cotes Orden 3</div>
+            </div>
+          </button>
+          <button class="nav-drawer-btn" onclick="switchMethod(3);closeDrawer()">
+            <span class="nav-drawer-num">4</span>
+            <div class="nav-drawer-method-name">Simpson 1/3<div class="nav-drawer-sub">Newton-Cotes Orden 2</div>
+            </div>
+          </button>
+          <button class="nav-drawer-btn" onclick="switchMethod(4);closeDrawer()">
+            <span class="nav-drawer-num">5</span>
+            <div class="nav-drawer-method-name">Simpson Abierto<div class="nav-drawer-sub">n particiones pares</div>
+            </div>
+          </button>
+        </div>
+        <div class="nav-drawer-footer">
+          <div class="nav-active-label">Método activo</div>
+          <div class="nav-active-pill" id="drawerActivePill">
+            <span id="drawerActiveNum">1</span> <span id="drawerActiveName">Trapezoidal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-btn active" onclick="switchMethod(0)"><span class="nav-num">1</span>Trapezoidal</button>
+      <button class="nav-btn" onclick="switchMethod(1)"><span class="nav-num">2</span>Jorge Boole</button>
+      <button class="nav-btn" onclick="switchMethod(2)"><span class="nav-num">3</span>Simpson 3/8</button>
+      <button class="nav-btn" onclick="switchMethod(3)"><span class="nav-num">4</span>Simpson 1/3</button>
+      <button class="nav-btn" onclick="switchMethod(4)"><span class="nav-num">5</span>Simpson Abierto</button>
+    </nav>
+
+    <main id="mainContent"></main>
+  </div>
 
   <script>
-    // ─────────────────────────────────────────────
-    // DRAWER MÓVIL
-    // ─────────────────────────────────────────────
-    const DRAWER_NAMES = ['Trapezoidal', 'Jorge Boole', 'Simpson 3/8', 'Simpson 1/3', 'Simpson Abierto'];
-    function toggleDrawer() {
-      const d = document.getElementById('navDrawer');
-      const b = document.getElementById('hamburgerBtn');
-      const isOpen = d.classList.contains('open');
-      isOpen ? closeDrawer() : openDrawer();
-    }
-    function openDrawer() {
-      document.getElementById('navDrawer').classList.add('open');
-      document.getElementById('hamburgerBtn').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeDrawer() {
-      document.getElementById('navDrawer').classList.remove('open');
-      document.getElementById('hamburgerBtn').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // ─────────────────────────────────────────────
-    // CONFIG DE MÉTODOS
-    // ─────────────────────────────────────────────
-    const METHODS = [
-      {
-        id: 0, name: 'Método Trapezoidal', sub: 'Regla Compuesta', hasN: true,
-        formula: 'I = (Δ/2)[ f(x₀) + 2f(x₁) + 2f(x₂) + … + f(xₙ) ]',
-        deltaFormula: 'Δ = (b − a) / n', divisor: 'n'
-      },
-      {
-        id: 1, name: 'Método Jorge Boole', sub: 'Newton-Cotes Cerrado', hasN: false,
-        formula: 'I = (2Δ/45)[ 7f(x₁) + 32f(x₂) + 12f(x₃) + 32f(x₄) + 7f(x₅) ]',
-        deltaFormula: 'Δ = (b − a) / 4', divisor: 4
-      },
-      {
-        id: 2, name: 'Simpson 3/8', sub: 'Newton-Cotes — Orden 3', hasN: false,
-        formula: 'I = (3Δ/8)[ f(x₁) + 3f(x₂) + 3f(x₃) + f(x₄) ]',
-        deltaFormula: 'Δ = (b − a) / 3', divisor: 3
-      },
-      {
-        id: 3, name: 'Simpson 1/3', sub: 'Newton-Cotes — Orden 2', hasN: true,
-        formula: 'I = (Δ/3)[ f(x₁) + 4f(x₂) + f(x₃) ]',
-        deltaFormula: 'Δ = (b − a) / 2', divisor: 2
-      },
-      {
-        id: 4, name: 'Simpson Abierto', sub: 'n particiones pares', hasN: true,
-        formula: 'I = (Δ/3)[ f(x₁) + 4f(x₂) + 2f(x₃) + 4f(x₄) + … + f(xₙ) ]',
-        deltaFormula: 'Δ = (b − a) / n', divisor: 'n'
-      },
+    /* ════════════════════════════════════════════
+       ↓↓↓ EDITA AQUÍ LOS NOMBRES DEL EQUIPO ↓↓↓
+    ════════════════════════════════════════════ */
+    const TEAM_MEMBERS = [
+      { name: 'Keyner Alfonso Reyes Tejedor', role: 'Integrante del equipo' },
+      { name: 'Carlos Andres Ramos Ardila', role: 'Integrante del equipo' },
+      { name: 'Luis Angel Diaz Ayola', role: 'Integrante del equipo' },
+      { name: 'Gustavo Adolfo Jimenez Medranos', role: 'Integrante del equipo' },
+      { name: 'Jose Andres Torres Dias', role: 'Integrante del equipo' },
     ];
 
-    // ─────────────────────────────────────────────
-    // TECLADO CIENTÍFICO — filas de botones
-    // Formato: [label, texto_insertado, clase_css]
-    // ─────────────────────────────────────────────
+    const SPL_MSGS = [
+      'Cargando librerías matemáticas…',
+      'Inicializando calculadora científica…',
+      'Preparando gráficas y tablas…',
+      'Configurando los 5 métodos…',
+      '¡Todo listo! ✓',
+    ];
+
+    /* ─── Splash: construir tarjetas ─── */
+    function buildSplash() {
+      const list = document.getElementById('splMembers');
+      list.innerHTML = TEAM_MEMBERS.map((m, i) => `
+        <div class="spl-card" id="splCard${i}">
+          <div class="spl-num">0${i + 1}</div>
+          <div class="spl-info">
+            <div class="spl-name">${m.name}</div>
+            <div class="spl-role">${m.role}</div>
+          </div>
+          <div class="spl-dot"></div>
+        </div>`).join('');
+    }
+
+    /* ─── Splash: animar ─── */
+    function animateSplash() {
+      const bar = document.getElementById('splProgBar');
+      const lbl = document.getElementById('splProgLabel');
+      setTimeout(() => document.getElementById('splBadges').classList.add('spl-vis'), 300);
+      TEAM_MEMBERS.forEach((_, i) => {
+        setTimeout(() => {
+          document.getElementById('splCard' + i).classList.add('spl-vis');
+          bar.style.width = Math.round(((i + 1) / TEAM_MEMBERS.length) * 80) + '%';
+          lbl.textContent = SPL_MSGS[i] || SPL_MSGS[SPL_MSGS.length - 2];
+        }, 500 + i * 350);
+      });
+      const done = 500 + TEAM_MEMBERS.length * 350 + 350;
+      setTimeout(() => {
+        bar.style.width = '100%';
+        lbl.textContent = SPL_MSGS[SPL_MSGS.length - 1];
+        document.getElementById('splEnterBtn').classList.add('spl-vis');
+      }, done);
+    }
+
+    /* ─── Splash: entrar a la app ─── */
+    function enterApp() {
+      document.getElementById('splash-overlay').classList.add('hidden');
+      document.getElementById('app-root').classList.add('app-visible');
+    }
+
+    /* ════════════════════════════════════════════
+       DRAWER MÓVIL
+    ════════════════════════════════════════════ */
+    const DRAWER_NAMES = ['Trapezoidal', 'Jorge Boole', 'Simpson 3/8', 'Simpson 1/3', 'Simpson Abierto'];
+    function toggleDrawer() { document.getElementById('navDrawer').classList.contains('open') ? closeDrawer() : openDrawer(); }
+    function openDrawer() { document.getElementById('navDrawer').classList.add('open'); document.getElementById('hamburgerBtn').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeDrawer() { document.getElementById('navDrawer').classList.remove('open'); document.getElementById('hamburgerBtn').classList.remove('open'); document.body.style.overflow = ''; }
+
+    /* ════════════════════════════════════════════
+       CONFIGURACIÓN DE MÉTODOS
+    ════════════════════════════════════════════ */
+    const METHODS = [
+      { id: 0, name: 'Método Trapezoidal', sub: 'Regla Compuesta', hasN: true, formula: 'I = (Δ/2)[ f(x₀) + 2f(x₁) + 2f(x₂) + … + f(xₙ) ]', deltaFormula: 'Δ = (b − a) / n', divisor: 'n' },
+      { id: 1, name: 'Método Jorge Boole', sub: 'Newton-Cotes Cerrado', hasN: false, formula: 'I = (2Δ/45)[ 7f(x₁) + 32f(x₂) + 12f(x₃) + 32f(x₄) + 7f(x₅) ]', deltaFormula: 'Δ = (b − a) / 4', divisor: 4 },
+      { id: 2, name: 'Simpson 3/8', sub: 'Newton-Cotes — Orden 3', hasN: false, formula: 'I = (3Δ/8)[ f(x₁) + 3f(x₂) + 3f(x₃) + f(x₄) ]', deltaFormula: 'Δ = (b − a) / 3', divisor: 3 },
+      { id: 3, name: 'Simpson 1/3', sub: 'Newton-Cotes — Orden 2', hasN: true, formula: 'I = (Δ/3)[ f(x₁) + 4f(x₂) + f(x₃) ]', deltaFormula: 'Δ = (b − a) / 2', divisor: 2 },
+      { id: 4, name: 'Simpson Abierto', sub: 'n particiones pares', hasN: true, formula: 'I = (Δ/3)[ f(x₁) + 4f(x₂) + 2f(x₃) + 4f(x₄) + … + f(xₙ) ]', deltaFormula: 'Δ = (b − a) / n', divisor: 'n' },
+    ];
+
+    /* ════════════════════════════════════════════
+       TECLADO CIENTÍFICO
+    ════════════════════════════════════════════ */
     const KB_ROWS = [
-      // — separador —
       ['__SEP__', 'Trigonométricas'],
-      ['sin', 'sin(', 'fn'],
-      ['cos', 'cos(', 'fn'],
-      ['tan', 'tan(', 'fn'],
-      ['asin', 'asin(', 'fn'],
-      ['acos', 'acos(', 'fn'],
+      ['sin', 'sin(', 'fn'], ['cos', 'cos(', 'fn'], ['tan', 'tan(', 'fn'], ['asin', 'asin(', 'fn'], ['acos', 'acos(', 'fn'],
       ['__SEP__', ''],
-      ['atan', 'atan(', 'fn'],
-      ['sec', '1/cos(', 'fn'],
-      ['csc', '1/sin(', 'fn'],
-      ['cot', '1/tan(', 'fn'],
-      ['sinc', 'sinc(', 'fn'],
-      // — hiperbólicas —
+      ['atan', 'atan(', 'fn'], ['sec', '1/cos(', 'fn'], ['csc', '1/sin(', 'fn'], ['cot', '1/tan(', 'fn'], ['sinc', 'sinc(', 'fn'],
       ['__SEP__', 'Hiperbólicas'],
-      ['sinh', 'sinh(', 'hyp'],
-      ['cosh', 'cosh(', 'hyp'],
-      ['tanh', 'tanh(', 'hyp'],
-      ['asinh', 'asinh(', 'hyp'],
-      ['acosh', 'acosh(', 'hyp'],
-      // — logaritmos y potencias —
+      ['sinh', 'sinh(', 'hyp'], ['cosh', 'cosh(', 'hyp'], ['tanh', 'tanh(', 'hyp'], ['asinh', 'asinh(', 'hyp'], ['acosh', 'acosh(', 'hyp'],
       ['__SEP__', 'Logaritmos y Potencias'],
-      ['ln', 'log(', 'fn'],
-      ['log₁₀', 'log10(', 'fn'],
-      ['log₂', 'log2(', 'fn'],
-      ['eˣ', 'exp(', 'fn'],
-      ['√x', 'sqrt(', 'fn'],
+      ['ln', 'log(', 'fn'], ['log₁₀', 'log10(', 'fn'], ['log₂', 'log2(', 'fn'], ['eˣ', 'exp(', 'fn'], ['√x', 'sqrt(', 'fn'],
       ['__SEP__', ''],
-      ['∛x', 'cbrt(', 'fn'],
-      ['x²', '^2', 'op'],
-      ['xⁿ', '^', 'op'],
-      ['10ˣ', '10^(', 'op'],
-      ['nPr', 'permutations(', 'fn'],
-      // — constantes —
+      ['∛x', 'cbrt(', 'fn'], ['x²', '^2', 'op'], ['xⁿ', '^', 'op'], ['10ˣ', '10^(', 'op'], ['nPr', 'permutations(', 'fn'],
       ['__SEP__', 'Constantes y Funciones'],
-      ['π', 'pi', 'cst'],
-      ['e', 'e', 'cst'],
-      ['φ', '1.6180339887', 'cst'],
-      ['|x|', 'abs(', 'fn'],
-      ['ceil', 'ceil(', 'fn'],
+      ['π', 'pi', 'cst'], ['e', 'e', 'cst'], ['φ', '1.6180339887', 'cst'], ['|x|', 'abs(', 'fn'], ['ceil', 'ceil(', 'fn'],
       ['__SEP__', ''],
-      ['floor', 'floor(', 'fn'],
-      ['round', 'round(', 'fn'],
-      ['sign', 'sign(', 'fn'],
-      ['mod', '%', 'op'],
-      ['!', '!', 'op'],
-      // — operadores y paréntesis —
+      ['floor', 'floor(', 'fn'], ['round', 'round(', 'fn'], ['sign', 'sign(', 'fn'], ['mod', '%', 'op'], ['!', '!', 'op'],
       ['__SEP__', 'Operadores'],
-      ['(', '(', 'op'],
-      [')', ')', 'op'],
-      ['+', '+', 'op'],
-      ['−', '-', 'op'],
-      ['×', '*', 'op'],
+      ['(', '(', 'op'], [')', ')', 'op'], ['+', '+', 'op'], ['−', '-', 'op'], ['×', '*', 'op'],
       ['__SEP__', ''],
-      ['÷', '/', 'op'],
-      ['.', '.', ''],
-      ['x', 'x', 'fn'],
-      ['⌫', '__DEL__', 'red'],
-      ['C', '__CLR__', 'red'],
-      // — números —
+      ['÷', '/', 'op'], ['.', '.', ''], ['x', 'x', 'fn'], ['⌫', '__DEL__', 'red'], ['C', '__CLR__', 'red'],
       ['__SEP__', 'Números'],
       ['7', '7', ''], ['8', '8', ''], ['9', '9', ''], ['4', '4', ''], ['5', '5', ''],
       ['6', '6', ''], ['1', '1', ''], ['2', '2', ''], ['3', '3', ''],
@@ -1236,50 +1568,29 @@
     ];
 
     function buildCalcHTML(id) {
-      let html = `
-    <div class="calc-section">
-      <div class="calc-section-title">Calculadora Científica — f(x)</div>
-      <div class="calc-display" id="m${id}-display">f(x)</div>
-      <div class="calc-grid">`;
-
+      let html = `<div class="calc-section"><div class="calc-section-title">Calculadora Científica — f(x)</div><div class="calc-display" id="m${id}-display">f(x)</div><div class="calc-grid">`;
       let i = 0;
       while (i < KB_ROWS.length) {
         const row = KB_ROWS[i];
-        if (row[0] === '__SEP__') {
-          if (row[1]) html += `<div class="calc-sep">${row[1]}</div>`;
-          else html += `<div class="calc-sep" style="border:none;padding-top:0;"></div>`;
-          i++; continue;
-        }
-        if (row[0] === '__SPAN2__') {
-          const ins = row[1].replace(/'/g, "\\'");
-          html += `<button class="ck span2 ${row[2]}" onclick="kbIns(${id},'${ins}')">${row[1]}</button>`;
-          i++; continue;
-        }
+        if (row[0] === '__SEP__') { html += row[1] ? `<div class="calc-sep">${row[1]}</div>` : `<div class="calc-sep" style="border:none;padding-top:0;"></div>`; i++; continue; }
+        if (row[0] === '__SPAN2__') { const ins = row[1].replace(/'/g, "\\'"); html += `<button class="ck span2 ${row[2]}" onclick="kbIns(${id},'${ins}')">${row[1]}</button>`; i++; continue; }
         const ins = row[1].replace(/'/g, "\\'");
         html += `<button class="ck ${row[2]}" onclick="kbIns(${id},'${ins}')">${row[0]}</button>`;
         i++;
       }
-
-      html += `</div>
-      <button class="use-btn" onclick="useFx(${id})">✓ Usar como f(x)</button>
-    </div>`;
+      html += `</div><button class="use-btn" onclick="useFx(${id})">✓ Usar como f(x)</button></div>`;
       return html;
     }
 
-    // ─────────────────────────────────────────────
-    // RENDER SECCIONES
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       RENDER SECCIONES
+    ════════════════════════════════════════════ */
     function buildSections() {
-      const mainEl = document.getElementById('mainContent');
-      mainEl.innerHTML = METHODS.map(m => `
+      document.getElementById('mainContent').innerHTML = METHODS.map(m => `
 <section class="section${m.id === 0 ? ' active' : ''}" id="m${m.id}">
-  <!-- LEFT -->
   <div class="left-panel">
     <div class="method-header">
-      <div class="method-name-row">
-        <div class="method-name">${m.name}</div>
-        <div class="method-sub-lbl">${m.sub}</div>
-      </div>
+      <div class="method-name-row"><div class="method-name">${m.name}</div><div class="method-sub-lbl">${m.sub}</div></div>
       <div class="integral-widget">
         <div class="integral-column">
           <div class="lim-label">b</div>
@@ -1291,20 +1602,10 @@
         <div class="fx-display" id="m${m.id}-fxdisp">f(x) dx</div>
       </div>
     </div>
-
     <div class="left-body">
       ${buildCalcHTML(m.id)}
-
-      ${m.hasN ? `<div class="inp-group">
-        <div class="inp-label">Subintervalos <code>n</code></div>
-        <input type="number" id="m${m.id}-n" value="${m.id === 0 ? 6 : m.id === 3 ? 2 : 4}" min="2"/>
-      </div>` : ''}
-
-      <div class="formula-section">
-        <div class="formula-title">Fórmula del Método</div>
-        <div class="formula-display">${m.formula}</div>
-      </div>
-
+      ${m.hasN ? `<div class="inp-group"><div class="inp-label">Subintervalos <code>n</code></div><input type="number" id="m${m.id}-n" value="${m.id === 0 ? 6 : m.id === 3 ? 2 : 4}" min="2"/></div>` : ''}
+      <div class="formula-section"><div class="formula-title">Fórmula del Método</div><div class="formula-display">${m.formula}</div></div>
       <div class="delta-section">
         <div class="delta-title">Cálculo de Δ — ${m.deltaFormula}</div>
         <div class="delta-row">
@@ -1319,29 +1620,16 @@
         </div>
         <div class="delta-formula-eq" id="m${m.id}-delta-eq"></div>
       </div>
-
       <button class="btn-calc" onclick="calc(${m.id})">Calcular Integral ∫</button>
       <button class="btn-reset" onclick="resetMethod(${m.id})">↺ Resetear</button>
     </div>
   </div>
-
-  <!-- RIGHT -->
   <div class="right-panel">
-    <div class="card">
-      <div class="card-header"><div class="card-icon">∑</div><div class="card-title">Tabla de Iteraciones y Sumatoria</div></div>
-      <div class="card-body"><div id="m${m.id}-tbl">${emptyHTML()}</div></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-icon">◉</div><div class="card-title">Puntos para Graficar</div></div>
-      <div class="card-body"><div id="m${m.id}-pts">${emptyHTML('Los puntos xᵢ, f(xᵢ) aparecen aquí')}</div></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-icon">〜</div><div class="card-title">Gráfica de f(x)</div></div>
-      <div class="card-body"><div class="chart-container"><canvas id="chart${m.id}"></canvas></div></div>
-    </div>
+    <div class="card"><div class="card-header"><div class="card-icon">∑</div><div class="card-title">Tabla de Iteraciones y Sumatoria</div></div><div class="card-body"><div id="m${m.id}-tbl">${emptyHTML()}</div></div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">◉</div><div class="card-title">Puntos para Graficar</div></div><div class="card-body"><div id="m${m.id}-pts">${emptyHTML('Los puntos xᵢ, f(xᵢ) aparecen aquí')}</div></div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">〜</div><div class="card-title">Gráfica de f(x)</div></div><div class="card-body"><div class="chart-container"><canvas id="chart${m.id}"></canvas></div></div></div>
   </div>
 </section>`).join('');
-
       METHODS.forEach(m => setupABListeners(m));
     }
 
@@ -1349,29 +1637,24 @@
       return `<div class="empty-state"><div class="empty-icon">∫</div><div class="empty-text">${msg}</div></div>`;
     }
 
-    // ─────────────────────────────────────────────
-    // NAVEGACIÓN
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       NAVEGACIÓN
+    ════════════════════════════════════════════ */
     function switchMethod(i) {
       document.querySelectorAll('.section').forEach((s, j) => s.classList.toggle('active', i === j));
       document.querySelectorAll('.nav-btn').forEach((b, j) => b.classList.toggle('active', i === j));
-      // actualizar drawer
       document.querySelectorAll('.nav-drawer-btn').forEach((b, j) => b.classList.toggle('active', i === j));
-      const numEl = document.getElementById('drawerActiveNum');
-      const nameEl = document.getElementById('drawerActiveName');
+      const numEl = document.getElementById('drawerActiveNum'), nameEl = document.getElementById('drawerActiveName');
       if (numEl) numEl.textContent = i + 1;
       if (nameEl) nameEl.textContent = DRAWER_NAMES[i];
     }
 
-    // ─────────────────────────────────────────────
-    // CALCULADORA — estado por método
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       CALCULADORA
+    ════════════════════════════════════════════ */
     const calcExpr = {};
     function getExpr(id) { return calcExpr[id] || ''; }
-    function setExpr(id, v) {
-      calcExpr[id] = v;
-      document.getElementById('m' + id + '-display').textContent = v || 'f(x)';
-    }
+    function setExpr(id, v) { calcExpr[id] = v; document.getElementById('m' + id + '-display').textContent = v || 'f(x)'; }
     function kbIns(id, ch) {
       if (ch === '__CLR__') { setExpr(id, ''); return; }
       if (ch === '__DEL__') { setExpr(id, getExpr(id).slice(0, -1)); return; }
@@ -1380,15 +1663,14 @@
     function useFx(id) {
       const expr = getExpr(id);
       if (!expr) { alert('Escribe primero una función usando la calculadora.'); return; }
-      // test rápido
       try { math.evaluate(expr, { x: 1 }); }
-      catch (e) { alert('Función inválida: ' + e.message + '\n\nUsa el teclado científico. Ejemplo: sin(x), x^2+1, exp(x)'); return; }
+      catch (e) { alert('Función inválida: ' + e.message + '\n\nEjemplo: sin(x), x^2+1, exp(x)'); return; }
       document.getElementById('m' + id + '-fxdisp').textContent = expr + ' dx';
     }
 
-    // ─────────────────────────────────────────────
-    // A / B → autocomplete delta
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       A / B → delta en tiempo real
+    ════════════════════════════════════════════ */
     function setupABListeners(m) {
       const aEl = document.getElementById('m' + m.id + '-a');
       const bEl = document.getElementById('m' + m.id + '-b');
@@ -1413,17 +1695,14 @@
       if (nEl) nEl.addEventListener('input', upd);
     }
 
-    // ─────────────────────────────────────────────
-    // EVALUAR f(x) — usa math.js (NO eval nativo)
-    // ─────────────────────────────────────────────
-    function evalF(expr, x) {
-      try { return math.evaluate(expr, { x }); }
-      catch { return NaN; }
-    }
+    /* ════════════════════════════════════════════
+       EVALUAR f(x)
+    ════════════════════════════════════════════ */
+    function evalF(expr, x) { try { return math.evaluate(expr, { x }); } catch { return NaN; } }
 
-    // ─────────────────────────────────────────────
-    // CHARTS
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       CHARTS
+    ════════════════════════════════════════════ */
     const charts = {};
     function destroyChart(i) { if (charts[i]) { charts[i].destroy(); delete charts[i]; } }
     function drawChart(idx, fxExpr, pts) {
@@ -1451,41 +1730,28 @@
       });
     }
 
-    // ─────────────────────────────────────────────
-    // RENDER TABLA + RESULTADO
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       RENDER TABLA + RESULTADO
+    ════════════════════════════════════════════ */
     function renderTable(rows, I, deltaVal, multiplierStr, wrapId) {
       const sumCoefFx = rows.reduce((s, r) => s + r.coefFx, 0);
-      let html = `<div class="tbl-wrap"><table>
-    <thead><tr><th>I</th><th>Xᵢ</th><th>F(Xᵢ)</th><th>COEF.</th><th>COEF × F(Xᵢ)</th></tr></thead><tbody>`;
-      rows.forEach(r => {
-        html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td><td>${r.coef}</td><td>${r.coefFx.toFixed(8)}</td></tr>`;
-      });
-      html += `<tr class="sum-row"><td colspan="4" style="text-align:right">Σ (Coef × f(xᵢ)) =</td><td>${sumCoefFx.toFixed(8)}</td></tr>`;
-      html += `</tbody></table></div>`;
-      html += `<div class="result-bar">
-    <div>
-      <div class="result-lbl">Integral Aproximada</div>
-      <div class="result-formula">${multiplierStr} × ${sumCoefFx.toFixed(6)}</div>
-    </div>
-    <div class="result-val">I ≈ ${I.toFixed(10)}</div>
-  </div>`;
+      let html = `<div class="tbl-wrap"><table><thead><tr><th>I</th><th>Xᵢ</th><th>F(Xᵢ)</th><th>COEF.</th><th>COEF × F(Xᵢ)</th></tr></thead><tbody>`;
+      rows.forEach(r => { html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td><td>${r.coef}</td><td>${r.coefFx.toFixed(8)}</td></tr>`; });
+      html += `<tr class="sum-row"><td colspan="4" style="text-align:right">Σ (Coef × f(xᵢ)) =</td><td>${sumCoefFx.toFixed(8)}</td></tr></tbody></table></div>`;
+      html += `<div class="result-bar"><div><div class="result-lbl">Integral Aproximada</div><div class="result-formula">${multiplierStr} × ${sumCoefFx.toFixed(6)}</div></div><div class="result-val">I ≈ ${I.toFixed(10)}</div></div>`;
       document.getElementById(wrapId).innerHTML = html;
     }
 
     function renderPoints(rows, wrapId) {
-      let html = `<div class="tbl-wrap"><table>
-    <thead><tr><th>I</th><th>Xᵢ</th><th>F(Xᵢ)</th></tr></thead><tbody>`;
-      rows.forEach(r => {
-        html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td></tr>`;
-      });
+      let html = `<div class="tbl-wrap"><table><thead><tr><th>I</th><th>Xᵢ</th><th>F(Xᵢ)</th></tr></thead><tbody>`;
+      rows.forEach(r => { html += `<tr><td>${r.i}</td><td>${r.x.toFixed(8)}</td><td>${r.fx.toFixed(8)}</td></tr>`; });
       html += `</tbody></table></div>`;
       document.getElementById(wrapId).innerHTML = html;
     }
 
-    // ─────────────────────────────────────────────
-    // RESET
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       RESET
+    ════════════════════════════════════════════ */
     function resetMethod(id) {
       setExpr(id, '');
       document.getElementById('m' + id + '-fxdisp').textContent = 'f(x) dx';
@@ -1504,12 +1770,12 @@
       destroyChart(id);
     }
 
-    // ─────────────────────────────────────────────
-    // CALC DISPATCHER
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       CALC DISPATCHER
+    ════════════════════════════════════════════ */
     function calc(id) {
       const fxExpr = getExpr(id);
-      if (!fxExpr) { alert('Escribe una función f(x) usando la calculadora y presiona "✓ Usar como f(x)".'); return; }
+      if (!fxExpr) { alert('Escribe una función f(x) y presiona "✓ Usar como f(x)".'); return; }
       const a = parseFloat(document.getElementById('m' + id + '-a').value);
       const b = parseFloat(document.getElementById('m' + id + '-b').value);
       if (isNaN(a) || isNaN(b)) { alert('Ingresa los límites a y b.'); return; }
@@ -1521,105 +1787,58 @@
       else if (id === 4) calcSA(a, b, fxExpr);
     }
 
-    // ─────────────────────────────────────────────
-    // MÉTODOS DE CÁLCULO
-    // ─────────────────────────────────────────────
-
-    // 0 — TRAPEZOIDAL
+    /* ════════════════════════════════════════════
+       MÉTODOS DE CÁLCULO (100% sin cambios)
+    ════════════════════════════════════════════ */
     function calcTrap(a, b, fx) {
       const n = parseInt(document.getElementById('m0-n').value) || 6;
-      const d = (b - a) / n;
-      const rows = [];
-      for (let i = 0; i <= n; i++) {
-        const x = a + i * d, f = evalF(fx, x);
-        const coef = (i === 0 || i === n) ? 1 : 2;
-        rows.push({ i, x, fx: f, coef, coefFx: coef * f });
-      }
-      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
-      const I = (d / 2) * sum;
-      renderTable(rows, I, d, `(${d.toFixed(6)}/2)`, 'm0-tbl');
-      renderPoints(rows, 'm0-pts');
-      drawChart(0, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+      const d = (b - a) / n, rows = [];
+      for (let i = 0; i <= n; i++) { const x = a + i * d, f = evalF(fx, x), coef = (i === 0 || i === n) ? 1 : 2; rows.push({ i, x, fx: f, coef, coefFx: coef * f }); }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0), I = (d / 2) * sum;
+      renderTable(rows, I, d, `(${d.toFixed(6)}/2)`, 'm0-tbl'); renderPoints(rows, 'm0-pts'); drawChart(0, fx, rows.map(r => ({ x: r.x, y: r.fx })));
     }
-
-    // 1 — BOOLE
     function calcBoole(a, b, fx) {
-      const d = (b - a) / 4;
-      const coefs = [7, 32, 12, 32, 7];
-      const rows = [];
-      for (let i = 0; i < 5; i++) {
-        const x = a + i * d, f = evalF(fx, x);
-        rows.push({ i: i + 1, x, fx: f, coef: coefs[i], coefFx: coefs[i] * f });
-      }
-      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
-      const I = (2 * d / 45) * sum;
-      renderTable(rows, I, d, `(2×${d.toFixed(6)}/45)`, 'm1-tbl');
-      renderPoints(rows, 'm1-pts');
-      drawChart(1, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+      const d = (b - a) / 4, coefs = [7, 32, 12, 32, 7], rows = [];
+      for (let i = 0; i < 5; i++) { const x = a + i * d, f = evalF(fx, x); rows.push({ i: i + 1, x, fx: f, coef: coefs[i], coefFx: coefs[i] * f }); }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0), I = (2 * d / 45) * sum;
+      renderTable(rows, I, d, `(2×${d.toFixed(6)}/45)`, 'm1-tbl'); renderPoints(rows, 'm1-pts'); drawChart(1, fx, rows.map(r => ({ x: r.x, y: r.fx })));
     }
-
-    // 2 — SIMPSON 3/8
     function calcS38(a, b, fx) {
-      const d = (b - a) / 3;
-      const coefs = [1, 3, 3, 1];
-      const rows = [];
-      for (let i = 0; i < 4; i++) {
-        const x = a + i * d, f = evalF(fx, x);
-        rows.push({ i: i + 1, x, fx: f, coef: coefs[i], coefFx: coefs[i] * f });
-      }
-      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
-      const I = (3 * d / 8) * sum;
-      renderTable(rows, I, d, `(3×${d.toFixed(6)}/8)`, 'm2-tbl');
-      renderPoints(rows, 'm2-pts');
-      drawChart(2, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+      const d = (b - a) / 3, coefs = [1, 3, 3, 1], rows = [];
+      for (let i = 0; i < 4; i++) { const x = a + i * d, f = evalF(fx, x); rows.push({ i: i + 1, x, fx: f, coef: coefs[i], coefFx: coefs[i] * f }); }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0), I = (3 * d / 8) * sum;
+      renderTable(rows, I, d, `(3×${d.toFixed(6)}/8)`, 'm2-tbl'); renderPoints(rows, 'm2-pts'); drawChart(2, fx, rows.map(r => ({ x: r.x, y: r.fx })));
     }
-
-    // 3 — SIMPSON 1/3
     function calcS13(a, b, fx) {
       let n = parseInt(document.getElementById('m3-n').value) || 2;
       if (n % 2 !== 0) n++;
-      const d = (b - a) / n;
-      const rows = [];
-      for (let i = 0; i <= n; i++) {
-        const x = a + i * d, f = evalF(fx, x);
-        let coef = 1;
-        if (i > 0 && i < n) coef = i % 2 === 0 ? 2 : 4;
-        rows.push({ i: i + 1, x, fx: f, coef, coefFx: coef * f });
-      }
-      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
-      const I = (d / 3) * sum;
-      renderTable(rows, I, d, `(${d.toFixed(6)}/3)`, 'm3-tbl');
-      renderPoints(rows, 'm3-pts');
-      drawChart(3, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+      const d = (b - a) / n, rows = [];
+      for (let i = 0; i <= n; i++) { const x = a + i * d, f = evalF(fx, x); let coef = 1; if (i > 0 && i < n) coef = i % 2 === 0 ? 2 : 4; rows.push({ i: i + 1, x, fx: f, coef, coefFx: coef * f }); }
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0), I = (d / 3) * sum;
+      renderTable(rows, I, d, `(${d.toFixed(6)}/3)`, 'm3-tbl'); renderPoints(rows, 'm3-pts'); drawChart(3, fx, rows.map(r => ({ x: r.x, y: r.fx })));
     }
-
-    // 4 — SIMPSON ABIERTO
-    // Fórmula: I = (Δ/3)[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + ... + f(xₙ)]
-    // Pesos:   i=0 → 1,  i par interior → 2,  i impar → 4,  i=n → 1
     function calcSA(a, b, fx) {
       let n = parseInt(document.getElementById('m4-n').value) || 4;
-      if (n % 2 !== 0) n++;          // n debe ser par
-      const d = (b - a) / n;
-      const rows = [];
-      for (let i = 0; i <= n; i++) {   // empieza en 0, incluye x₀
+      if (n % 2 !== 0) n++;
+      const d = (b - a) / n, rows = [];
+      for (let i = 0; i <= n; i++) {
         const x = a + i * d, f = evalF(fx, x);
         let coef;
-        if (i === 0 || i === n) coef = 1;   // extremos
-        else if (i % 2 !== 0) coef = 4;   // impares
-        else coef = 2;   // pares interiores
+        if (i === 0 || i === n) coef = 1;
+        else if (i % 2 !== 0) coef = 4;
+        else coef = 2;
         rows.push({ i, x, fx: f, coef, coefFx: coef * f });
       }
-      const sum = rows.reduce((s, r) => s + r.coefFx, 0);
-      const I = (d / 3) * sum;
-      renderTable(rows, I, d, `(${d.toFixed(6)}/3)`, 'm4-tbl');
-      renderPoints(rows, 'm4-pts');
-      drawChart(4, fx, rows.map(r => ({ x: r.x, y: r.fx })));
+      const sum = rows.reduce((s, r) => s + r.coefFx, 0), I = (d / 3) * sum;
+      renderTable(rows, I, d, `(${d.toFixed(6)}/3)`, 'm4-tbl'); renderPoints(rows, 'm4-pts'); drawChart(4, fx, rows.map(r => ({ x: r.x, y: r.fx })));
     }
 
-    // ─────────────────────────────────────────────
-    // INIT
-    // ─────────────────────────────────────────────
+    /* ════════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════════ */
     buildSections();
+    buildSplash();
+    animateSplash();
   </script>
 </body>
 
